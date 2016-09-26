@@ -1,0 +1,13 @@
+.gradle
+/build/
+/out/
+!gradle/wrapper/gradle-wrapper.jar
+bower_components/
+
+### IntelliJ IDEA ###
+.idea
+*.iml
+
+### JRebel
+
+rebel.xml
