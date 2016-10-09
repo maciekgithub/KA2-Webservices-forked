@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.web.client.RestTemplate;
 import pl.euler.bgs.restapi.internal.GenapiProperties;
 
 @SpringBootApplication
+@Import(SwaggerConfiguration.class)
 @EnableConfigurationProperties(GenapiProperties.class)
 public class Application {
 
