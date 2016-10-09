@@ -1,6 +1,7 @@
 buildscript {
     ext {
 		kotlinVersion = '1.0.4'
+		anxionRelease = '1.4.0'
 	}
 	repositories {
 		mavenCentral()
@@ -8,6 +9,7 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+		classpath "pl.allegro.tech.build:axion-release-plugin:${anxionRelease}"
     }
 }
 
@@ -16,13 +18,28 @@ apply plugin: 'kotlin'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'pl.allegro.tech.build.axion-release'
 
-jar {
-	baseName = 'bgs-restapi'
-	version = '1.0-SNAPSHOT'
-}
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+/** Versioning */
+scmVersion {
+	repository {
+		directory = project.rootProject.file('./..')
+	}
+	localOnly = true // never connect to remote
+	tag {
+		prefix = rootProject.name
+	}
+}
+
+project.version = scmVersion.version
+
+jar {
+	baseName = rootProject.name
+	version = project.version
+}
 
 repositories {
 	mavenCentral()
