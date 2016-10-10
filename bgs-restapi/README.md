@@ -31,3 +31,12 @@ directory where the JAR file has been located.
 ## REST API DOCUMENTATION
 
 REST API documentation is available by Swagger under [/api-docs](http://localhost:8080/api-docs) endpoint.
+
+## HEALTH CHECK ENDPOINTS
+
+```
+/trace  -> tracing last 10 requests
+/health -> status about application (up/down, etc.)
+/stats  -> jvm parameters (mem, threads, etc.)
+/info   -> build version information
+```
