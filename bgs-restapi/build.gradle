@@ -48,19 +48,20 @@ repositories {
 
 dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile 'org.springframework.boot:spring-boot-devtools'
 	compile 'io.springfox:springfox-swagger2:2.6.0'
 	compile 'io.springfox:springfox-swagger-ui:2.6.0'
 	compile 'com.google.guava:guava:19.0'
 	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 	compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.7.5"
+	compile files('libs/ojdbc7.jar')
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 
 //	compile('org.springframework.boot:spring-boot-starter-aop')
 //	compile('org.springframework.boot:spring-boot-starter-cache')
 //	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-//	compile('org.springframework.boot:spring-boot-starter-jdbc')
 //	compile('org.springframework.boot:spring-boot-starter-security')
 //	compile('org.springframework.boot:spring-boot-starter-validation')
 //	optional "org.springframework.boot:spring-boot-configuration-processor"
@@ -71,10 +72,6 @@ compileJava.dependsOn(processResources)
 bootRun {
 	addResources = true
 }
-
-//sourceSets {
-//    main.java.srcDirs += 'src/main/kotlin'
-//}
 
 // generate gradle wrapper with specific version
 task wrapper(type: Wrapper) {
