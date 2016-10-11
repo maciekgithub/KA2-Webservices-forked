@@ -36,7 +36,8 @@ REST API documentation is available by Swagger under [/api-docs](http://localhos
 
 ```
 /trace  -> tracing last 10 requests
-/health -> status about application (up/down, etc.)
+/health -> status about application (up/down/maintenance, etc.)
 /stats  -> jvm parameters (mem, threads, etc.)
 /info   -> build version information
+/maintenance -> POST, DELETE - enable disable maintenance mode
 ```
