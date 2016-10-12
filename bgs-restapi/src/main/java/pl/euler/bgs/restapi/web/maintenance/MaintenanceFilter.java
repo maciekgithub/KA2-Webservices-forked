@@ -1,5 +1,6 @@
 package pl.euler.bgs.restapi.web.maintenance;
 
+import javaslang.collection.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
@@ -10,8 +11,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class MaintenanceFilter implements Filter {
@@ -41,13 +40,11 @@ public class MaintenanceFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String requestUrl = req.getRequestURL().toString();
 
-        Set<String> paths = mvcEndpoints.getEndpoints().stream() //access to actuator endpoints
+        CharSequence[] paths = List.ofAll(mvcEndpoints.getEndpoints())
                 .map(MvcEndpoint::getPath)
-                .collect(Collectors.toSet());
-        paths.add("/maintenance"); // access to maintenance endpoint
-
-        CharSequence[] pathsArray = paths.stream().toArray(String[]::new);
-        return StringUtils.endsWithAny(requestUrl, pathsArray);
+                .append("/maintenance")
+                .toJavaArray(String.class);
+        return StringUtils.endsWithAny(requestUrl, paths);
     }
 
     @Override
