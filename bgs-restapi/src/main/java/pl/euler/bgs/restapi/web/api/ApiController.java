@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.metrics;
+package pl.euler.bgs.restapi.web.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +12,18 @@ import pl.euler.bgs.restapi.web.common.JsonResponse;
 
 @RestController
 @SuppressWarnings("unused")
-public class MetricsController {
+public class ApiController {
 
     private final DatabaseService databaseService;
 
     @Autowired
-    public MetricsController(DatabaseService databaseService) {
+    public ApiController(DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 
-    @PostMapping(value = "/metrics")
+    @PostMapping(value = {"/metric", "/dictionary", "watchdog"})
     public ResponseEntity<JsonResponse> getMetrics(@RequestBody JsonNode json) {
-        DatabaseResponse dbResponse = databaseService.executeRequestLogic("/metrics", json.toString());
+        DatabaseResponse dbResponse = databaseService.executeRequestLogic("/metric", json.toString());
         return dbResponse.convertToWebResponse();
     }
 
