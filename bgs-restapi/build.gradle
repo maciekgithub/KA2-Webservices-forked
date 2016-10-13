@@ -66,6 +66,7 @@ dependencies {
 	compile 'com.javaslang:javaslang:1.2.3'
 	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 	compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.7.5"
+	compile 'com.zaxxer:HikariCP:2.5.1'
 	compile files('libs/ojdbc7.jar')
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
