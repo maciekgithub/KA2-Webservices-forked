@@ -23,3 +23,6 @@ DECLARE
 BEGIN
   request('/api/metrics', '{"name": "Robert"}', answer, status);
 END;
+
+-- check user open sessions
+select username, sid, serial# from v$session where username = 'BGS';
