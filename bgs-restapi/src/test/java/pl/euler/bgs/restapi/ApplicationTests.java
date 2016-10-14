@@ -6,13 +6,17 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.euler.bgs.restapi.internal.*;
+import pl.euler.bgs.restapi.config.AppProperties;
+import pl.euler.bgs.restapi.internal.GenapiService;
+import pl.euler.bgs.restapi.internal.MsisdnList;
+import pl.euler.bgs.restapi.internal.NewSubscriptionCreated;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class ApplicationTests {
 
-	@Autowired GenapiProperties properties;
+	@Autowired
+	AppProperties properties;
 
 	@Ignore
 	@Test

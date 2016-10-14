@@ -8,11 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import pl.euler.bgs.restapi.internal.GenapiProperties;
+import pl.euler.bgs.restapi.config.AppProperties;
+import pl.euler.bgs.restapi.config.SwaggerConfiguration;
 
 @SpringBootApplication
 @Import(SwaggerConfiguration.class)
-@EnableConfigurationProperties(GenapiProperties.class)
+@EnableConfigurationProperties({AppProperties.class})
 public class Application {
 
 	public static void main(String[] args) {

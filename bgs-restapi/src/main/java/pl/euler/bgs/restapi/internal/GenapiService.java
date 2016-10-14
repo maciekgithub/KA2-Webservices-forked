@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import pl.euler.bgs.restapi.config.AppProperties;
 
 @Service
 public class GenapiService {
     private static final Logger log = LoggerFactory.getLogger(GenapiService.class);
     private RestTemplate restTemplate = new RestTemplate();
 
-    private GenapiProperties properties;
+    private AppProperties appProperties;
 
     @Autowired
-    public GenapiService(GenapiProperties properties) {
-        this.properties = properties;
+    public GenapiService(AppProperties properties) {
+        this.appProperties = properties;
     }
 
     public NewSubscriptionCreated activateSubscription(String msisdn, String clientId) {
@@ -35,7 +36,7 @@ public class GenapiService {
     }
 
     private String getUrl(String path) {
-        return properties.getUrl() + path;
+        return appProperties.getGenapi().getUrl() + path;
     }
 
     public DeletedSubscription deactivateSubscription(String msisdn, String clientId) {

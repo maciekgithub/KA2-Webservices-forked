@@ -1,0 +1,74 @@
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <property name="LOG_PATH" value="${LOG_PATH:-./logs}" />
+    <property name="MAIN_LOG_FILE" value="${MAIN_LOG_FILE:-${LOG_PATH}/bgs.log}"/>
+    <property name="LOG_FILE_SUMMARY_TRACKING" value="${LOG_FILE_SUMMARY_TRACKING:-${LOG_PATH}/summary-tracking.log}"/>
+    <property name="LOG_FILE_DETAILS_TRACKING" value="${LOG_FILE_DETAILS_TRACKING:-${LOG_PATH}/details-tracking.log}"/>
+
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+        <!--<logger name="org.springframework.web" level="DEBUG"/>-->
+        <logger name="summary-tracking" level="INFO" />
+        <logger name="details-tracking" level="INFO" />
+    </springProfile>
+
+    <springProfile name="prod">
+        <appender name="SUMMARY-TRACKING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>${LOG_FILE_SUMMARY_TRACKING}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>${LOG_FILE_SUMMARY_TRACKING}.%i</fileNamePattern>
+            </rollingPolicy>
+            <triggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <MaxFileSize>100MB</MaxFileSize>
+            </triggeringPolicy>
+        </appender>
+
+        <appender name="DETAILS-TRACKING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>${LOG_FILE_DETAILS_TRACKING}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>${LOG_FILE_DETAILS_TRACKING}.%i</fileNamePattern>
+            </rollingPolicy>
+            <triggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <MaxFileSize>100MB</MaxFileSize>
+            </triggeringPolicy>
+        </appender>
+
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>${MAIN_LOG_FILE}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>${MAIN_LOG_FILE}.%i</fileNamePattern>
+            </rollingPolicy>
+            <triggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <MaxFileSize>10MB</MaxFileSize>
+            </triggeringPolicy>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="FILE" />
+        </root>
+
+        <logger name="summary-tracking" level="DEBUG" additivity="false" >
+            <appender-ref ref="SUMMARY-TRACKING-FILE"/>
+        </logger>
+        <logger name="details-tracking" level="INFO" additivity="false" >
+            <appender-ref ref="SUMMARY-TRACKING-FILE"/>
+        </logger>
+    </springProfile>
+
+</configuration>

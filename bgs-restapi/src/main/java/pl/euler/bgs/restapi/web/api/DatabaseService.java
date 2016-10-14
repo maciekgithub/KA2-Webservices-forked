@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.db.common;
+package pl.euler.bgs.restapi.web.api;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;

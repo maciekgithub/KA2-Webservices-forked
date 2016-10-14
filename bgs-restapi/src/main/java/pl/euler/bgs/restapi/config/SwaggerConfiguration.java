@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi;
+package pl.euler.bgs.restapi.config;
 
 import com.google.common.base.Predicate;
 import org.springframework.context.annotation.Bean;
