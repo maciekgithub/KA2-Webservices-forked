@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @SuppressWarnings("unused")
+@RequestMapping("/api")
 public class ApiController {
     private static final Logger log = LoggerFactory.getLogger(ApiController.class);
 
