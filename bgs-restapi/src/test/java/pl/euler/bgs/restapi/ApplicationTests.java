@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.euler.bgs.restapi.config.AppProperties;
-import pl.euler.bgs.restapi.internal.GenapiService;
-import pl.euler.bgs.restapi.internal.MsisdnList;
-import pl.euler.bgs.restapi.internal.NewSubscriptionCreated;
+import pl.euler.bgs.restapi.web.genapi.GenapiService;
+import pl.euler.bgs.restapi.web.genapi.MsisdnList;
+import pl.euler.bgs.restapi.web.genapi.NewSubscriptionCreated;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)

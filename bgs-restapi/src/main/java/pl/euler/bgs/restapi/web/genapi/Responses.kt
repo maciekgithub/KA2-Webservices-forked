@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.internal
+package pl.euler.bgs.restapi.web.genapi
 
 class NewSubscriptionCreated(val created_new_subscription: Boolean) {
     override fun toString(): String {
