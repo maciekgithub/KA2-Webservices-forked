@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SuppressWarnings("unused")
-public class GenapiInvocationController {
-  private static final Logger log = LoggerFactory.getLogger(GenapiInvocationController.class);
+public class GenapiFrontendController {
+  private static final Logger log = LoggerFactory.getLogger(GenapiFrontendController.class);
 
   @Autowired GenapiService genapiService;
 
