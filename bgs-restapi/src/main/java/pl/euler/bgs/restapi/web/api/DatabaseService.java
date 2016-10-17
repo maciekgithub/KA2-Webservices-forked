@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.Clob;
 import java.util.Map;
 
@@ -17,11 +18,12 @@ import static java.util.Objects.requireNonNull;
 
 @Service
 public class DatabaseService {
+    private static final String CATALOG_NAME = "wbs_services";
     private static final String PROCEDURE_NAME = "request";
     private static final String REQUEST_URL_PARAM = "p_request_url";
     private static final String REQUEST_BODY_PARAM = "p_request_body";
+    private static final String RESPONSE_STATUS_PARAM = "p_error_code";
     private static final String RESPONSE_BODY_PARAM = "p_answer";
-    private static final String RESPONSE_STATUS_PARAM = "p_status";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -32,11 +34,11 @@ public class DatabaseService {
 
     public DatabaseResponse executeRequestLogic(String requestUrl, String requestJson) {
 
-        SimpleJdbcCall procedureCall = new SimpleJdbcCall(jdbcTemplate).withProcedureName(PROCEDURE_NAME);
+        SimpleJdbcCall procedureCall = new SimpleJdbcCall(jdbcTemplate).withCatalogName(CATALOG_NAME).withProcedureName(PROCEDURE_NAME);
         procedureCall.addDeclaredParameter(new SqlParameter(REQUEST_URL_PARAM, OracleTypes.VARCHAR));
         procedureCall.addDeclaredParameter(new SqlParameter(REQUEST_BODY_PARAM, OracleTypes.CLOB));
+        procedureCall.addDeclaredParameter(new SqlOutParameter(RESPONSE_STATUS_PARAM, OracleTypes.NUMBER));
         procedureCall.addDeclaredParameter(new SqlOutParameter(RESPONSE_BODY_PARAM, OracleTypes.CLOB));
-        procedureCall.addDeclaredParameter(new SqlOutParameter(RESPONSE_STATUS_PARAM, OracleTypes.INTEGER));
 
         try {
             Map<String, Object> result = procedureCall.execute(
@@ -45,7 +47,7 @@ public class DatabaseService {
 
             Clob responseBody = (Clob) result.get(RESPONSE_BODY_PARAM);
             String responseJson = CharStreams.toString(responseBody.getCharacterStream());
-            int status = (int) result.get(RESPONSE_STATUS_PARAM);
+            int status = ((BigDecimal) result.get(RESPONSE_STATUS_PARAM)).intValue();
             return new DatabaseResponse(responseJson, status);
         } catch (Exception ex) {
             throw new IllegalStateException("Problem with database procedure call", ex);
