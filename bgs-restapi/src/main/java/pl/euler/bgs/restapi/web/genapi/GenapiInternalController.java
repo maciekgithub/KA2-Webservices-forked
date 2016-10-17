@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @SuppressWarnings("unused")
-@RequestMapping("/geo")
+@RequestMapping("/proxy/gen")
 public class GenapiInternalController {
   private static final Logger log = LoggerFactory.getLogger(GenapiInternalController.class);
 

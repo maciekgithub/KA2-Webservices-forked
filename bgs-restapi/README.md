@@ -23,7 +23,7 @@ REST API documentation is available by Swagger under [/api-docs](http://localhos
 
 ```
 /api/metric, /api/dictionary, /api/watchdog     -> metrics endpoints
-/geo/*                                          -> gen api internal endpoints
+/proxy/gen/*                                    -> gen api internal endpoints
 ```
 
 ##### HEALTH CHECK ENDPOINTS
