@@ -67,10 +67,33 @@ LOG_FILE_SUMMARY_TRACKING -> file path & name for services statistics
 LOG_FILE_DETAILS_TRACKING -> file path & name for details tracking
 ```
 
+##### SSL SUPPORT
+
+The application provides the SSL support. In order to enable SSL the profile `ssl` should be enabled. With this profile application starts
+working on standard HTTPS port **443**. Currently mutual SSL authentication is not enabled.
+
+The server certificate is signed by self generated and self signed CA so if you want avoid the untrusted certificate problem please import our CA authority
+to trusted authorities on you machine. With this step you wan't see the issue that the server is untrusted. How to import CA on Chrome:
+
+- Go to Chrome Settings.
+- Click on "advanced settings"
+- Under HTTPS/SSL click to "Manage Certificates"
+- Go to "Trusted Root Certificate Authorities"
+- Click to "Import"
+- There will be a pop up window that will ask you if you want to install this certificate.
+
+You will find server certificates files (private, csr, public) on `/etc/certificates` directory.
+
 ##### ACTIVE PROFILE
 
-Default active profile is set to dev. This profile add the logging to console. Suggested profile for production-ready system is `prod`.
+Default active profile is set to dev. This profile has set logging to console.
 
 ```
 spring.profiles.active=dev
+```
+
+Suggested profile for production-ready system:
+ 
+```
+spring.profiles.active=prod,ssl
 ```
