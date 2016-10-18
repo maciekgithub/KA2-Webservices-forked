@@ -86,7 +86,7 @@ dependencies {
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 
-//	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-security')
 //	compile('org.springframework.boot:spring-boot-starter-validation')
 //	optional "org.springframework.boot:spring-boot-configuration-processor"
 }
