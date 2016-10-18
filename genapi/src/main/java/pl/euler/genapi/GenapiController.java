@@ -1,5 +1,6 @@
 package pl.euler.genapi;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +14,9 @@ public class GenapiController {
 	public GenapiController(final GenapiService service) {
 
 		post("/v2/msisdns/subscriptions", (req, res) -> {
-			String clientId = req.queryParams("client_id");
-			String msisdn = req.queryParams("msisdn");
+			ActivateSubscription sub = new Gson().fromJson(req.body(), ActivateSubscription.class);
+			String clientId = sub.getClient_id();
+			String msisdn = sub.getMsisdn();
 			return service.activateSubscription(msisdn, clientId);
 		} , json());
 
