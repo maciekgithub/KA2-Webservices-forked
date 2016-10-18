@@ -95,6 +95,7 @@ compileJava.dependsOn(processResources)
 
 springBoot  {
 	buildInfo()
+	executable = true
 }
 
 bootRun {
