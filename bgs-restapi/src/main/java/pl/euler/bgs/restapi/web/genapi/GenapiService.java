@@ -1,15 +1,17 @@
 package pl.euler.bgs.restapi.web.genapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javaslang.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pl.euler.bgs.restapi.config.AppProperties;
+
+import java.util.function.Function;
 
 @Service
 public class GenapiService {
@@ -17,21 +19,23 @@ public class GenapiService {
     private RestTemplate restTemplate = new RestTemplate();
 
     private AppProperties appProperties;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public GenapiService(AppProperties properties) {
+    public GenapiService(AppProperties properties, ObjectMapper objectMapper) {
         this.appProperties = properties;
+        this.objectMapper = objectMapper;
     }
 
-    public NewSubscriptionCreated activateSubscription(String msisdn, String clientId) {
-        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
-        bodyMap.add("msisdn", msisdn);
-        bodyMap.add("client_id", clientId);
+    public NewSubscriptionCreated activateSubscription(ActivateSubscription activateSubscription) {
+        String json = Try
+                .of(() -> objectMapper.writeValueAsString(activateSubscription))
+                .orElseThrow((Function<Throwable, RuntimeException>) throwable -> new IllegalArgumentException("Cannot prepare json!"));
 
         ResponseEntity<NewSubscriptionCreated> response =
-                restTemplate.postForEntity(getUrl("/msisdns/subscriptions"), bodyMap, NewSubscriptionCreated.class);
+                restTemplate.postForEntity(getUrl("/msisdns/subscriptions"), json, NewSubscriptionCreated.class);
         log.info("Request for activate subscription. MSISDN:{}, ClientId:{}. Response status:{}, Result:{}",
-                 msisdn, clientId, response.getStatusCode(), response.getBody());
+                 activateSubscription, response.getStatusCode(), response.getBody());
         return response.getBody();
     }
 

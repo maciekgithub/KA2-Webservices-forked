@@ -1,5 +1,11 @@
 package pl.euler.bgs.restapi.web.genapi
 
+class ActivateSubscription(val client_id: String, val msisdn: String) {
+    override fun toString(): String {
+        return "activate_subscription, client_id = $client_id, msisdn = $msisdn"
+    }
+}
+
 class NewSubscriptionCreated(val created_new_subscription: Boolean) {
     override fun toString(): String {
         return "created_new_subscription = " + created_new_subscription
