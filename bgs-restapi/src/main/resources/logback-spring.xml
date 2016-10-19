@@ -63,11 +63,11 @@
             <appender-ref ref="FILE" />
         </root>
 
-        <logger name="summary-tracking" level="DEBUG" additivity="false" >
+        <logger name="summary-tracking" level="INFO" additivity="false" >
             <appender-ref ref="SUMMARY-TRACKING-FILE"/>
         </logger>
         <logger name="details-tracking" level="INFO" additivity="false" >
-            <appender-ref ref="SUMMARY-TRACKING-FILE"/>
+            <appender-ref ref="DETAILS-TRACKING-FILE"/>
         </logger>
     </springProfile>
 
