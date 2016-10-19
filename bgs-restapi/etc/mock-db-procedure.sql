@@ -36,20 +36,26 @@ END;
 select username, sid, serial# from v$session where username = 'BGS';
 
 
---- PACZKA OD BARTKA
+--- 2016.10.19 specyfikacja metod
 
 create or replace package bgs_webservices.wbs_webservices is
   procedure request(
     p_request_url  varchar2,
+    p_request_urlparams varchar2,
+    p_header_agent varchar2,
+    p_header_date  varchar2,
     p_request_body clob,
     p_error_code   out number,
     p_answer       out clob
   );
 end;
 
-create or replace package body           bgs_webservices.wbs_webservices is
+create or replace package body bgs_webservices.wbs_webservices is
   procedure request(
     p_request_url  varchar2,
+    p_request_urlparams varchar2,
+    p_header_agent varchar2,
+    p_header_date  varchar2,
     p_request_body clob,
     p_error_code   out number,
     p_answer       out clob

@@ -1,6 +1,8 @@
 package pl.euler.bgs.restapi.web.api;
 
 import com.google.common.io.CharStreams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
@@ -18,7 +20,12 @@ import java.util.Map;
 
 @Service
 public class DatabaseService {
-    private static final String REQUEST_URL_PARAM = "p_request_url";
+    private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
+
+    private static final String REQUEST_URL = "p_request_url";
+    private static final String REQUEST_PARAMS = "p_request_urlparams";
+    private static final String REQUEST_HEADER_AGENT = "p_header_agent";
+    private static final String REQUEST_HEADER_DATE = "p_header_date";
     private static final String REQUEST_BODY_PARAM = "p_request_body";
     private static final String RESPONSE_STATUS_PARAM = "p_error_code";
     private static final String RESPONSE_BODY_PARAM = "p_answer";
@@ -30,28 +37,38 @@ public class DatabaseService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public DatabaseResponse executeRequestLogic(String requestUrl, String requestJson) {
+    public DatabaseResponse executeRequestLogic(final DatabaseRequest request) {
+        log.info("execute request: {}", request);
         List<SqlParameter> declaredParameters = new ArrayList<>();
-        declaredParameters.add(new SqlParameter(REQUEST_URL_PARAM, Types.VARCHAR));
+        declaredParameters.add(new SqlParameter(REQUEST_URL, Types.VARCHAR));
+        declaredParameters.add(new SqlParameter(REQUEST_PARAMS, Types.VARCHAR));
+        declaredParameters.add(new SqlParameter(REQUEST_HEADER_AGENT, Types.VARCHAR));
+        declaredParameters.add(new SqlParameter(REQUEST_HEADER_DATE, Types.VARCHAR));
         declaredParameters.add(new SqlParameter(REQUEST_BODY_PARAM, Types.CLOB));
         declaredParameters.add(new SqlOutParameter(RESPONSE_STATUS_PARAM, Types.NUMERIC));
         declaredParameters.add(new SqlOutParameter(RESPONSE_BODY_PARAM, Types.CLOB));
 
         try {
             Map<String, Object> result = this.jdbcTemplate.call(con -> {
-                CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?)}");
-                statement.setString(1, requestUrl);
-                statement.setCharacterStream(2, new StringReader(requestJson), requestJson.length());
-                statement.registerOutParameter(3, Types.NUMERIC);
-                statement.registerOutParameter(4, Types.CLOB);
+                CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?)}");
+                statement.setString(1, request.getRequestUrl());
+                statement.setString(2, request.getRequestParams());
+                statement.setString(3, request.getHeaderAgent());
+                statement.setString(4, request.getHeaderDate());
+                statement.setCharacterStream(5, new StringReader(request.getRequestJson()), request.getRequestJson().length());
+                statement.registerOutParameter(6, Types.NUMERIC);
+                statement.registerOutParameter(7, Types.CLOB);
                 return statement;
             }, declaredParameters);
 
             Clob responseBody = (Clob) result.get(RESPONSE_BODY_PARAM);
             String responseJson = CharStreams.toString(responseBody.getCharacterStream());
             int status = ((BigDecimal) result.get(RESPONSE_STATUS_PARAM)).intValue();
-            return new DatabaseResponse(responseJson, status);
+            DatabaseResponse dbResponse = new DatabaseResponse(responseJson, status);
+            log.info("return response: {}", dbResponse);
+            return dbResponse;
         } catch (Exception e) {
+            log.error("", e);
             throw new IllegalStateException("Cannot execute request logic!", e);
         }
     }

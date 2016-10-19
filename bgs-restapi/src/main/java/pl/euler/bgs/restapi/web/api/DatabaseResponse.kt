@@ -18,4 +18,8 @@ class DatabaseResponse(val json: String, val statusCode: Int) {
         return ResponseEntity(JsonRawResponse(json), HttpStatus.valueOf(statusCode))
     }
 
+    override fun toString(): String {
+        return "DatabaseResponse(statusCode=$statusCode, json='$json')"
+    }
+
 }
