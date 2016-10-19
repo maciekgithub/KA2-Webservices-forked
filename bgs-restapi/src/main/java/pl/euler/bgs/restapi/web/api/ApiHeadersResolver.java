@@ -28,6 +28,7 @@ public class ApiHeadersResolver implements HandlerMethodArgumentResolver {
         if (isNull(userAgent) || isNull(date)) {
             throw new MissingHeaderException("There is no User-Agent / Date headers on the request!");
         }
+        //todo accept only the application json
         String contentType = firstNonNull(webRequest.getHeader("Content-Type"), ContentType.APPLICATION_JSON.getMimeType());
 
         return new ApiHeaders(userAgent, date, contentType);
