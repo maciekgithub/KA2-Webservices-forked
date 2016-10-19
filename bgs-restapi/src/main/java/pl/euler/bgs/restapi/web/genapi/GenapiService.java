@@ -10,21 +10,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.euler.bgs.restapi.config.AppProperties;
+import pl.euler.bgs.restapi.core.ssl.TrustAllSslConnectionFactory;
 
 import java.util.function.Function;
 
 @Service
 public class GenapiService {
     private static final Logger log = LoggerFactory.getLogger(GenapiService.class);
-    private RestTemplate restTemplate = new RestTemplate();
 
     private AppProperties appProperties;
     private ObjectMapper objectMapper;
+    private RestTemplate restTemplate;
 
     @Autowired
     public GenapiService(AppProperties properties, ObjectMapper objectMapper) {
         this.appProperties = properties;
         this.objectMapper = objectMapper;
+        this.restTemplate = TrustAllSslConnectionFactory.setupRestTemplate();
     }
 
     public NewSubscriptionCreated activateSubscription(ActivateSubscription activateSubscription) {
