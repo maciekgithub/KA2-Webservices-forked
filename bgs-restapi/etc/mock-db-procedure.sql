@@ -44,6 +44,7 @@ create or replace package bgs_webservices.wbs_webservices is
     p_request_urlparams varchar2,
     p_header_agent varchar2,
     p_header_date  varchar2,
+    p_header_contenttype VARCHAR2,
     p_request_body clob,
     p_error_code   out number,
     p_answer       out clob
@@ -56,6 +57,7 @@ create or replace package body bgs_webservices.wbs_webservices is
     p_request_urlparams varchar2,
     p_header_agent varchar2,
     p_header_date  varchar2,
+    p_header_contenttype VARCHAR2,
     p_request_body clob,
     p_error_code   out number,
     p_answer       out clob
