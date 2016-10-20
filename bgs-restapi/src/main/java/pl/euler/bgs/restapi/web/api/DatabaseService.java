@@ -1,5 +1,6 @@
 package pl.euler.bgs.restapi.web.api;
 
+import com.codahale.metrics.annotation.Timed;
 import com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
+import pl.euler.bgs.restapi.core.tracking.Tracked;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -38,8 +40,10 @@ public class DatabaseService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Tracked
+    @Timed(name = "wbs_webservices_procedure")
     public DatabaseResponse executeRequestLogic(final DatabaseRequest request) {
-        log.info("execute request: {}", request);
+        log.info("execute request: {}", request.infoLog());
         List<SqlParameter> declaredParameters = new ArrayList<>();
         declaredParameters.add(new SqlParameter(REQUEST_URL, Types.VARCHAR));
         declaredParameters.add(new SqlParameter(REQUEST_PARAMS, Types.VARCHAR));
@@ -70,7 +74,7 @@ public class DatabaseService {
             String responseJson = CharStreams.toString(responseBody.getCharacterStream());
             int status = ((BigDecimal) result.get(RESPONSE_STATUS_PARAM)).intValue();
             DatabaseResponse dbResponse = new DatabaseResponse(responseJson, status);
-            log.info("return response: {}", dbResponse);
+            log.info("return response: {}", dbResponse.infoLog());
             return dbResponse;
         } catch (Exception e) {
             log.error("", e);
