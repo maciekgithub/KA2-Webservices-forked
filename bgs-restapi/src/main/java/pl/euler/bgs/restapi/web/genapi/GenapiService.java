@@ -5,8 +5,7 @@ import javaslang.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.euler.bgs.restapi.config.AppProperties;
@@ -34,8 +33,13 @@ public class GenapiService {
                 .of(() -> objectMapper.writeValueAsString(activateSubscription))
                 .orElseThrow((Function<Throwable, RuntimeException>) throwable -> new IllegalArgumentException("Cannot prepare json!"));
 
-        ResponseEntity<NewSubscriptionCreated> response =
-                restTemplate.postForEntity(getUrl("/msisdns/subscriptions"), json, NewSubscriptionCreated.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        ResponseEntity<NewSubscriptionCreated> response = restTemplate.exchange(getUrl("/msisdns/subscriptions"),
+                                                                                HttpMethod.POST, entity, NewSubscriptionCreated.class);
+
         log.info("Request for activate subscription. MSISDN:{}, ClientId:{}. Response status:{}, Result:{}",
                  activateSubscription, response.getStatusCode(), response.getBody());
         return response.getBody();
