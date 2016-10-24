@@ -97,3 +97,7 @@ Suggested profile for production-ready system:
 ```
 spring.profiles.active=prod,ssl
 ```
+
+http://docs.spring.io/spring-boot/docs/current/reference/html/howto-traditional-deployment.html
+http://stackoverflow.com/questions/31017064/how-to-externalize-spring-boot-application-properties-to-tomcat-lib-folder
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
