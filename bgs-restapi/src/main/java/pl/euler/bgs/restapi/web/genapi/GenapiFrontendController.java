@@ -16,7 +16,7 @@ public class GenapiFrontendController {
 
   @GetMapping(value = "/activateSubscription/{msisdn}/{clientId}")
   public NewSubscriptionCreated activateSubscription(@PathVariable String msisdn, @PathVariable String clientId) {
-    return genapiService.activateSubscription(msisdn, clientId);
+    return genapiService.activateSubscription(new ActivateSubscription(clientId, msisdn));
   }
 
   @GetMapping(value = "/deactivateSubscription/{msisdn}/{clientId}")

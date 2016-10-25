@@ -18,8 +18,8 @@ public class GenapiInternalController {
   @Autowired GenapiService genapiService;
 
   @PostMapping(value = "/v2/msisdns/subscriptions")
-  public NewSubscriptionCreated activateSubscription(@RequestParam("msisdn") String msisdn, @RequestParam("client_id") String clientId) {
-    return genapiService.activateSubscription(msisdn, clientId);
+  public NewSubscriptionCreated activateSubscription(@RequestBody ActivateSubscription activateSubscription) {
+    return genapiService.activateSubscription(activateSubscription);
   }
 
   @DeleteMapping("/v2/msisdns/{msisdn}/subscriptions/{client_id}")

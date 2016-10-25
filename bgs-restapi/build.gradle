@@ -68,6 +68,8 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 	compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.7.5"
 	compile 'com.zaxxer:HikariCP:2.5.1'
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+	compile group: 'org.json', name: 'json', version: '20160810'
 	compile files('libs/ojdbc7.jar')
 
 	compile "io.dropwizard.metrics:metrics-core"
@@ -95,6 +97,7 @@ compileJava.dependsOn(processResources)
 
 springBoot  {
 	buildInfo()
+	executable = true
 }
 
 bootRun {
