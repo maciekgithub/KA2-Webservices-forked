@@ -1,10 +1,7 @@
 package pl.euler.bgs.restapi.web.maintenance;
 
-import javaslang.collection.List;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
-import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoints;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -14,12 +11,10 @@ import java.io.IOException;
 
 @Component
 public class MaintenanceFilter implements Filter {
-    private final MvcEndpoints mvcEndpoints;
     private final MaintenanceService maintenanceService;
 
     @Autowired
-    public MaintenanceFilter(MvcEndpoints mvcEndpoints, MaintenanceService maintenanceService) {
-        this.mvcEndpoints = mvcEndpoints;
+    public MaintenanceFilter(MaintenanceService maintenanceService) {
         this.maintenanceService = maintenanceService;
     }
 
@@ -38,13 +33,7 @@ public class MaintenanceFilter implements Filter {
 
     private boolean isActuatorOrMaintenanceEndpoint(ServletRequest request) {
         HttpServletRequest req = (HttpServletRequest) request;
-        String requestUrl = req.getRequestURL().toString();
-
-        CharSequence[] paths = List.ofAll(mvcEndpoints.getEndpoints())
-                .map(MvcEndpoint::getPath)
-                .append("/maintenance")
-                .toJavaArray(String.class);
-        return StringUtils.endsWithAny(requestUrl, paths);
+        return new AntPathRequestMatcher("/management/**").matches(req);
     }
 
     @Override

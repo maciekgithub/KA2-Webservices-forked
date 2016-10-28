@@ -12,10 +12,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
-import static springfox.documentation.builders.PathSelectors.any;
-import static springfox.documentation.builders.PathSelectors.regex;
+import static springfox.documentation.builders.PathSelectors.ant;
 
 @Controller
 @EnableSwagger2
@@ -38,7 +35,7 @@ public class SwaggerConfiguration {
 
     @SuppressWarnings({"Guava", "unchecked"})
     private Predicate<String> bgsPaths() {
-        return and(any(), not(regex("/api-docs")), not(regex("/error"))) ;
+        return ant("/api/**");
     }
 
     private ApiInfo apiInfo() {
