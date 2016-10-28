@@ -26,13 +26,13 @@ REST API documentation is available by Swagger under [/api-docs](http://localhos
 /proxy/gen/*                                    -> gen api internal endpoints
 ```
 
-##### HEALTH CHECK ENDPOINTS
+##### MANAGEMENT ENDPOINTS
 ```
-/trace  -> tracing last 10 requests
-/health -> status about application (up/down/maintenance, etc.)
-/stats  -> jvm parameters (mem, threads, etc.)
-/info   -> build version information
-/maintenance -> POST, DELETE - enable disable maintenance mode
+POST DELETE /maintenance        -> maintenance mode (enable, disable), authorization required
+GET /info                       -> build version information, authorization is not required
+GET /trace                      -> tracing last 10 requests, authorization required
+GET /health                     -> status about application (up/down/maintenance, etc.), authorization required for details
+GET /metrics                    -> jvm parameters (mem, threads, etc.), authorization required
 ```
 
 ## APPLICATION CONFIGURATION
