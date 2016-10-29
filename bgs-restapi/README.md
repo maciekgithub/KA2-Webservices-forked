@@ -10,6 +10,10 @@ java -jar bgs-restapi-{VERSION}.jar
 NOTE: The version above tag 0.1.0 needs database oracle connection to start up. If you need the version for mocking the genapi please
 use the version from mentioned tag.
 
+##### Integration testing
+
+In order to run integration test use: `gradlew integrationTest`
+
 ##### Setup genapi and bgs-restapi
 
 1. Run genapi locally (see the README.md on that repo in order to know how to do that) - it runs on http://localhost:3000
