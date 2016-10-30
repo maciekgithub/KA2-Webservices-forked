@@ -27,7 +27,7 @@ REST API documentation is available by Swagger under [/api-docs](http://localhos
 
 ```
 /api/metric, /api/dictionary, /api/watchdog     -> metrics endpoints
-/proxy/gen/*                                    -> gen api internal endpoints
+/proxy/gen/*                                    -> gen api internal endpoints (DISABLED NOW)
 ```
 
 ##### MANAGEMENT ENDPOINTS
