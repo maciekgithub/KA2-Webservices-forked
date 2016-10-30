@@ -13,6 +13,10 @@ data class DatabaseRequest(val requestUrl: String, val requestMethod: HttpMethod
         this(requestUrl, requestMethod, requestParams, headers, "{}") {
     }
 
+    constructor(requestUrl: String, requestMethod: HttpMethod, headers: ApiHeaders, requestJson: String) :
+        this(requestUrl, requestMethod, "", headers, requestJson) {
+    }
+
     override fun toString(): String {
         return "DatabaseResponse(requestUrl=$requestUrl, requestMethod=$requestMethod, requestParams=$requestParams, headers=$headers, json='$requestJson')"
     }

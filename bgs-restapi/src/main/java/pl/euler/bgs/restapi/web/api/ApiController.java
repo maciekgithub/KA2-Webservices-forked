@@ -9,7 +9,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.HandlerMapping;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,15 +28,7 @@ public class ApiController {
         this.databaseService = databaseService;
     }
 
-    @Timed(name = "/metric, /watchdog")
-    @PostMapping(value = {"/metric", "watchdog"})
-    public ResponseEntity<JsonRawResponse> getMetrics(HttpServletRequest request, @RequestBody JsonNode json, ApiHeaders headers) {
-        String mapping = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE); //dynamic mapping determine
-        DatabaseRequest dbRequest = new DatabaseRequest(mapping, HttpMethod.POST, "", headers, json.toString());
-        return databaseService.executeRequestLogic(dbRequest).convertToWebResponse();
-    }
-
-    @Timed(name = "/dictionaries")
+    @Timed(name = "GET /dictionaries")
     @GetMapping("/dictionaries")
     public ResponseEntity<JsonRawResponse> getDictionaries(ApiHeaders headers, HttpServletRequest request) {
         // TODO: 2016-10-29 add params decoding
@@ -49,9 +40,18 @@ public class ApiController {
                 .convertToWebResponse();
     }
 
-    @DeleteMapping("/list/{listName}")
+    @Timed(name = "POST /lists")
+    @PostMapping("/lists")
+    public ResponseEntity<JsonRawResponse> createList(ApiHeaders headers, @RequestBody JsonNode json) {
+        return databaseService
+                .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.POST, headers, json.toString()))
+                .convertToWebResponse();
+    }
+
+    @Timed(name = "DELETE /lists")
+    @DeleteMapping("/lists/{listName}")
     public ResponseEntity<JsonRawResponse> deleteAbonentList(ApiHeaders headers, @PathVariable String listName) {
-        String url = "/list/"+listName;
+        String url = "/lists/"+listName;
         return databaseService
                 .executeRequestLogic(new DatabaseRequest(url, HttpMethod.DELETE, listName, headers))
                 .convertToWebResponse();
