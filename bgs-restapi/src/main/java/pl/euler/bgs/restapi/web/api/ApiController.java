@@ -49,8 +49,7 @@ public class ApiController {
 
     @Timed(name = "GET /lists")
     @GetMapping("/lists/{listName}")
-    public ResponseEntity<JsonRawResponse> getList(HttpServletRequest request, ApiHeaders headers, @PathVariable String listName,
-            @RequestBody JsonNode json) {
+    public ResponseEntity<JsonRawResponse> getList(HttpServletRequest request, ApiHeaders headers, @PathVariable String listName) {
 
         String requestParams = Try.of(() -> URLDecoder.decode(request.getQueryString(), Charsets.UTF_8.name())).get();
         String url = "/lists/" + listName;
@@ -65,7 +64,7 @@ public class ApiController {
     public ResponseEntity<JsonRawResponse> deleteAbonentList(ApiHeaders headers, @PathVariable String listName) {
         String url = "/lists/"+listName;
         return databaseService
-                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.DELETE, listName, headers))
+                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.DELETE, headers))
                 .convertToWebResponse();
     }
 
