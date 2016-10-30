@@ -4,6 +4,7 @@
 !gradle/wrapper/gradle-wrapper.jar
 bower_components/
 *.log
+/classes/
 
 ### IntelliJ IDEA ###
 .idea
