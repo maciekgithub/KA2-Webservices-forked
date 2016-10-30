@@ -53,6 +53,14 @@ public class ApiController {
                 .convertToWebResponse();
     }
 
+    @DeleteMapping("/list/{listName}")
+    public ResponseEntity<JsonRawResponse> deleteAbonentList(ApiHeaders headers, @PathVariable String listName) {
+        String url = "/list/"+listName;
+        return databaseService
+                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.DELETE, listName, headers))
+                .convertToWebResponse();
+    }
+
     @ExceptionHandler(value = {MissingHeaderException.class, IncorrectHeaderException.class})
     void handleBadRequests(HttpServletResponse response, MissingHeaderException exception) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
