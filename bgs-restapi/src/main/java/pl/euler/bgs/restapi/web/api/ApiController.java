@@ -2,6 +2,8 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Charsets;
+import javaslang.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 @RestController
 @SuppressWarnings("unused")
@@ -31,10 +34,6 @@ public class ApiController {
     @Timed(name = "GET /dictionaries")
     @GetMapping("/dictionaries")
     public ResponseEntity<JsonRawResponse> getDictionaries(ApiHeaders headers, HttpServletRequest request) {
-        // TODO: 2016-10-29 add params decoding
-        //System.out.println(request.getQueryString());
-//        Try.run(() -> System.out.println(URLDecoder.decode(request.getQueryString(), "utf-8")));
-
         return databaseService
                 .executeRequestLogic(new DatabaseRequest("/dictionaries", HttpMethod.GET , headers))
                 .convertToWebResponse();
@@ -45,6 +44,19 @@ public class ApiController {
     public ResponseEntity<JsonRawResponse> createList(ApiHeaders headers, @RequestBody JsonNode json) {
         return databaseService
                 .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.POST, headers, json.toString()))
+                .convertToWebResponse();
+    }
+
+    @Timed(name = "GET /lists")
+    @GetMapping("/lists/{listName}")
+    public ResponseEntity<JsonRawResponse> getList(HttpServletRequest request, ApiHeaders headers, @PathVariable String listName,
+            @RequestBody JsonNode json) {
+
+        String requestParams = Try.of(() -> URLDecoder.decode(request.getQueryString(), Charsets.UTF_8.name())).get();
+        String url = "/lists/" + listName;
+
+        return databaseService
+                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.GET, requestParams, headers))
                 .convertToWebResponse();
     }
 
