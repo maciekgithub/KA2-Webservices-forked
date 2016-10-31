@@ -3,6 +3,7 @@ package pl.euler.bgs.restapi.web.maintenance;
 import com.google.common.base.Preconditions;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import javaslang.control.Option;
 import javaslang.control.Try;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class MaintenanceService {
 
     void turnOnMaintenanceMode() {
         this.unwrappedDataSource.suspendPool();
-        HikariPool pool = (HikariPool) new DirectFieldAccessor(unwrappedDataSource).getPropertyValue("pool");
-        pool.softEvictConnections();
+        // the pool can be not initialized (no requests before) and then there is no field pool
+        Option.of((HikariPool) new DirectFieldAccessor(unwrappedDataSource).getPropertyValue("pool")).forEach(HikariPool::softEvictConnections);
         MAINTENANCE_MODE = true;
     }
 
@@ -35,7 +36,7 @@ public class MaintenanceService {
         this.unwrappedDataSource.resumePool();
     }
 
-    boolean isMaintenanceModeEnabled() {
+    public boolean isMaintenanceModeEnabled() {
         return MAINTENANCE_MODE;
     }
 

@@ -10,6 +10,10 @@ java -jar bgs-restapi-{VERSION}.jar
 NOTE: The version above tag 0.1.0 needs database oracle connection to start up. If you need the version for mocking the genapi please
 use the version from mentioned tag.
 
+##### Integration testing
+
+In order to run integration test use: `gradlew integrationTest`
+
 ##### Setup genapi and bgs-restapi
 
 1. Run genapi locally (see the README.md on that repo in order to know how to do that) - it runs on http://localhost:3000
@@ -23,16 +27,16 @@ REST API documentation is available by Swagger under [/api-docs](http://localhos
 
 ```
 /api/metric, /api/dictionary, /api/watchdog     -> metrics endpoints
-/proxy/gen/*                                    -> gen api internal endpoints
+/proxy/gen/*                                    -> gen api internal endpoints (DISABLED NOW)
 ```
 
-##### HEALTH CHECK ENDPOINTS
+##### MANAGEMENT ENDPOINTS
 ```
-/trace  -> tracing last 10 requests
-/health -> status about application (up/down/maintenance, etc.)
-/stats  -> jvm parameters (mem, threads, etc.)
-/info   -> build version information
-/maintenance -> POST, DELETE - enable disable maintenance mode
+POST DELETE /maintenance        -> maintenance mode (enable, disable), authorization required
+GET /info                       -> build version information, authorization is not required
+GET /trace                      -> tracing last 10 requests, authorization required
+GET /health                     -> status about application (up/down/maintenance, etc.), authorization required for details
+GET /metrics                    -> jvm parameters (mem, threads, etc.), authorization required
 ```
 
 ## APPLICATION CONFIGURATION

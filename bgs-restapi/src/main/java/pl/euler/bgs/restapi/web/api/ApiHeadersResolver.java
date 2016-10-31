@@ -8,7 +8,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.isNull;
 
 @Component
@@ -25,11 +24,13 @@ public class ApiHeadersResolver implements HandlerMethodArgumentResolver {
 
         String userAgent = webRequest.getHeader("User-Agent");
         String date = webRequest.getHeader("Date");
-        if (isNull(userAgent) || isNull(date)) {
+        String contentType = webRequest.getHeader("Content-Type");
+        if (isNull(userAgent) || isNull(date) || isNull(contentType)) {
             throw new MissingHeaderException("There is no User-Agent / Date headers on the request!");
         }
-        //todo accept only the application json
-        String contentType = firstNonNull(webRequest.getHeader("Content-Type"), ContentType.APPLICATION_JSON.getMimeType());
+        if (!ContentType.APPLICATION_JSON.getMimeType().equalsIgnoreCase(contentType)) {
+            throw new IncorrectHeaderException(String.format("We accept only %s content type.", ContentType.APPLICATION_JSON.getMimeType()));
+        }
 
         return new ApiHeaders(userAgent, date, contentType);
     }

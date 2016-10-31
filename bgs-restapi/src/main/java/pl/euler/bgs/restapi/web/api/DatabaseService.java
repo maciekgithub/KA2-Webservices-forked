@@ -25,13 +25,14 @@ public class DatabaseService {
     private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
 
     private static final String REQUEST_URL = "p_request_url";
+    private static final String REQUEST_METHOD = "p_request_method";
     private static final String REQUEST_PARAMS = "p_request_urlparams";
     private static final String REQUEST_HEADER_AGENT = "p_header_agent";
     private static final String REQUEST_HEADER_DATE = "p_header_date";
     private static final String REQUEST_HEADER_CONTENT_TYPE = "p_header_contenttype";
     private static final String REQUEST_BODY_PARAM = "p_request_body";
     private static final String RESPONSE_STATUS_PARAM = "p_error_code";
-    private static final String RESPONSE_BODY_PARAM = "p_answer";
+    private static final String RESPONSE_BODY_PARAM = "p_answer_body";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -46,6 +47,7 @@ public class DatabaseService {
         log.info("execute request: {}", request.infoLog());
         List<SqlParameter> declaredParameters = new ArrayList<>();
         declaredParameters.add(new SqlParameter(REQUEST_URL, Types.VARCHAR));
+        declaredParameters.add(new SqlParameter(REQUEST_METHOD, Types.VARCHAR));
         declaredParameters.add(new SqlParameter(REQUEST_PARAMS, Types.VARCHAR));
         declaredParameters.add(new SqlParameter(REQUEST_HEADER_AGENT, Types.VARCHAR));
         declaredParameters.add(new SqlParameter(REQUEST_HEADER_DATE, Types.VARCHAR));
@@ -58,15 +60,16 @@ public class DatabaseService {
 
         try {
             Map<String, Object> result = this.jdbcTemplate.call(con -> {
-                CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?, ?)}");
+                CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
                 statement.setString(1, request.getRequestUrl());
-                statement.setString(2, request.getRequestParams());
-                statement.setString(3, headers.getUserAgent());
-                statement.setString(4, headers.getDate());
-                statement.setString(5, headers.getContentType());
-                statement.setCharacterStream(6, new StringReader(request.getRequestJson()), request.getRequestJson().length());
-                statement.registerOutParameter(7, Types.NUMERIC);
-                statement.registerOutParameter(8, Types.CLOB);
+                statement.setString(2, request.getRequestMethod().name());
+                statement.setString(3, request.getRequestParams());
+                statement.setString(4, headers.getUserAgent());
+                statement.setString(5, headers.getDate());
+                statement.setString(6, headers.getContentType());
+                statement.setCharacterStream(7, new StringReader(request.getRequestJson()), request.getRequestJson().length());
+                statement.registerOutParameter(8, Types.NUMERIC);
+                statement.registerOutParameter(9, Types.CLOB);
                 return statement;
             }, declaredParameters);
 

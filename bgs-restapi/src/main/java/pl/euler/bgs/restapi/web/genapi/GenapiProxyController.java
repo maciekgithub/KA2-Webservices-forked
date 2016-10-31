@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
  * Controller which has re-mapping for genapi services in order to use as internal api for db calls (due to the fact
  * that there is a problem with oracle and certificates calls).
  */
-@RestController
+//@RestController // disabled for now (unused) - remove in future
 @SuppressWarnings("unused")
 @RequestMapping("/proxy/gen")
-public class GenapiInternalController {
-  private static final Logger log = LoggerFactory.getLogger(GenapiInternalController.class);
+public class GenapiProxyController {
+  private static final Logger log = LoggerFactory.getLogger(GenapiProxyController.class);
 
   @Autowired GenapiService genapiService;
 
