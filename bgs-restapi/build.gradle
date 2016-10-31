@@ -22,7 +22,6 @@ apply plugin: 'kotlin'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
-apply plugin: 'war'
 apply plugin: 'pl.allegro.tech.build.axion-release'
 apply from: 'gradle/integration-test.gradle'
 
@@ -52,9 +51,8 @@ jar {
 	version = project.version
 }
 
-war {
-	baseName = 'bgs'
-	version = project.version
+if (project.hasProperty('war')) {
+	apply from: 'gradle/war.gradle'
 }
 
 repositories {
@@ -65,7 +63,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-jdbc'
 	compile "org.springframework.boot:spring-boot-starter-actuator"
-//	compile 'org.springframework.boot:spring-boot-devtools'
+	compile 'org.springframework.boot:spring-boot-devtools'
 	compile 'org.springframework.boot:spring-boot-starter-aop'
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile 'io.springfox:springfox-swagger2:2.6.0'
@@ -93,11 +91,8 @@ dependencies {
 		exclude(module: 'metrics-core')
 		exclude(module: 'metrics-healthchecks')
 	}
-	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 
-//	compile('org.springframework.boot:spring-boot-starter-validation')
 //	optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 

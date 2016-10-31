@@ -102,6 +102,16 @@ Suggested profile for production-ready system:
 spring.profiles.active=prod,ssl
 ```
 
-http://docs.spring.io/spring-boot/docs/current/reference/html/howto-traditional-deployment.html
-http://stackoverflow.com/questions/31017064/how-to-externalize-spring-boot-application-properties-to-tomcat-lib-folder
-http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
+##### BUILD WAR
+
+In order to build war file (tested on Glassfish 4.1.1) instead of executable JAR execute the build with the following command:
+
+```
+gradlew clean build -Pwar
+```
+
+In order to override the `application.properties` for configuration on server the easiest way to do it is a specify a environment property which
+will point to the location with `application.properties`. The name of the property should be `SPRING_CONFIG_LOCATION` for example:
+`SPRING_CONFIG_LOCATION=file:/etc/conf`.
+
+[More about externalized configuration, section 24.3](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html)
