@@ -101,3 +101,17 @@ Suggested profile for production-ready system:
 ```
 spring.profiles.active=prod,ssl
 ```
+
+##### BUILD WAR
+
+In order to build war file (tested on Glassfish 4.1.1) instead of executable JAR execute the build with the following command:
+
+```
+gradlew clean build -Pwar
+```
+
+In order to override the `application.properties` for configuration on server the easiest way to do it is a specify a environment property which
+will point to the location with `application.properties`. The name of the property should be `SPRING_CONFIG_LOCATION` for example:
+`SPRING_CONFIG_LOCATION=file:/etc/conf`.
+
+[More about externalized configuration, section 24.3](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html)

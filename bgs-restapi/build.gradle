@@ -51,6 +51,10 @@ jar {
 	version = project.version
 }
 
+if (project.hasProperty('war')) {
+	apply from: 'gradle/war.gradle'
+}
+
 repositories {
 	mavenCentral()
 }
@@ -87,10 +91,8 @@ dependencies {
 		exclude(module: 'metrics-core')
 		exclude(module: 'metrics-healthchecks')
 	}
-
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 
-//	compile('org.springframework.boot:spring-boot-starter-validation')
 //	optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 
