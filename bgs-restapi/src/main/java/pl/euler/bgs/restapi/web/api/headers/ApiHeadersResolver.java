@@ -2,7 +2,6 @@ package pl.euler.bgs.restapi.web.api.headers;
 
 import com.google.common.base.MoreObjects;
 import org.springframework.core.MethodParameter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -12,7 +11,6 @@ import static java.util.Objects.isNull;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.apache.http.entity.ContentType.WILDCARD;
 
-@Component
 public class ApiHeadersResolver implements HandlerMethodArgumentResolver {
 
     @Override

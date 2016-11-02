@@ -2,10 +2,8 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Charsets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import javaslang.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
 
 @RestController
 @Api(value = "BGS REST API", description = "BGS REST API Endpoints")
@@ -50,34 +47,35 @@ public class MetricsController {
                 .convertToWebResponse();
     }
 
-    @PostMapping("/lists/{listName}")
-    @Timed(name = "POST /lists/{listName}")
+    @RequestMapping(path = "/lists/{listName}", method = {RequestMethod.POST, RequestMethod.PUT})
+    @Timed(name = "POST/PUT /lists/{listName}")
     @ApiOperation("Create new list without metric")
-    public ResponseEntity<JsonRawResponse> createList(@PathVariable String listName, ApiHeaders headers, @RequestBody JsonNode json) {
+    public ResponseEntity<JsonRawResponse> createList(@PathVariable String listName, ApiHeaders headers, @RequestBody JsonNode json,
+            RequestParams params) {
+
         String url = "/lists/" + listName;
         return databaseService
-                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.POST, headers, json.toString()))
+                .executeRequestLogic(new DatabaseRequest(url, params, headers, json.toString()))
                 .convertToWebResponse();
     }
 
     @GetMapping("/lists")
     @Timed(name = "GET /lists")
     @ApiOperation("Get list of subscriber lists")
-    public ResponseEntity<JsonRawResponse> getSubscriberLists(HttpServletRequest request, ApiHeaders headers) {
-        String requestParams = Try.of(() -> URLDecoder.decode(request.getQueryString(), Charsets.UTF_8.name())).orElse("");
+    public ResponseEntity<JsonRawResponse> getSubscriberLists(HttpServletRequest request, ApiHeaders headers, RequestParams params) {
         return databaseService
-                .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.GET, requestParams, headers))
+                .executeRequestLogic(new DatabaseRequest("/lists", params, headers))
                 .convertToWebResponse();
     }
 
     @GetMapping("/lists/{listName}")
     @Timed(name = "GET /lists/{listName}")
     @ApiOperation("Get content of subscriber list")
-    public ResponseEntity<JsonRawResponse> getSpecificSubscriberList(HttpServletRequest request, ApiHeaders headers, @PathVariable String listName) {
-        String requestParams = Try.of(() -> URLDecoder.decode(request.getQueryString(), Charsets.UTF_8.name())).get();
+    public ResponseEntity<JsonRawResponse> getSpecificSubscriberList(HttpServletRequest request, ApiHeaders headers, @PathVariable String listName,
+            RequestParams params) {
         String url = "/lists/" + listName;
         return databaseService
-                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.GET, requestParams, headers))
+                .executeRequestLogic(new DatabaseRequest(url, params, headers))
                 .convertToWebResponse();
     }
 

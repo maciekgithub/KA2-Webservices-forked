@@ -61,13 +61,14 @@ public class DatabaseService {
         declaredParameters.add(new SqlOutParameter(RESPONSE_BODY_PARAM, Types.CLOB));
 
         ApiHeaders headers = request.getHeaders();
+        RequestParams requestParams = request.getParams();
 
         try {
             Map<String, Object> result = this.jdbcTemplate.call(con -> {
                 CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
                 statement.setString(1, request.getRequestUrl());
-                statement.setString(2, request.getRequestMethod().name());
-                statement.setString(3, request.getRequestParams());
+                statement.setString(2, requestParams.getHttpMethod().name());
+                statement.setString(3, requestParams.getUrlParams());
                 statement.setString(4, headers.getUserAgent());
                 statement.setString(5, headers.getDate());
                 statement.setString(6, headers.getContentType());
