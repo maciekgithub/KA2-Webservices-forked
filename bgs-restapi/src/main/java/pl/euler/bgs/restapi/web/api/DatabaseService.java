@@ -5,11 +5,14 @@ import com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.RecoverableDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
 import pl.euler.bgs.restapi.core.tracking.Tracked;
+import pl.euler.bgs.restapi.web.common.HttpCodeException;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -79,6 +82,10 @@ public class DatabaseService {
             DatabaseResponse dbResponse = new DatabaseResponse(responseJson, status);
             log.info("return response: {}", dbResponse.infoLog());
             return dbResponse;
+        } catch (RecoverableDataAccessException dataException) {
+            log.info("Cancelling request due to immediate maintenance mode! Cause: {}", dataException.getMessage());
+            throw new HttpCodeException(HttpStatus.SERVICE_UNAVAILABLE, "The immediate maintenance mode has been enabled. " +
+                    "Transaction has been cancelled");
         } catch (Exception e) {
             log.error("", e);
             throw new IllegalStateException("Cannot execute request logic!", e);

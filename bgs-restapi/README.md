@@ -23,20 +23,18 @@ In order to run integration test use: `gradlew integrationTest`
 
 REST API documentation is available by Swagger under [/api-docs](http://localhost:8080/api-docs) endpoint.
 
-##### Important endpoints:
-
-```
-/api/metric, /api/dictionary, /api/watchdog     -> metrics endpoints
-/proxy/gen/*                                    -> gen api internal endpoints (DISABLED NOW)
-```
+See also the [wiki docs](https://redmine.euler.pl/projects/dokumentacja/wiki/WS_API).
 
 ##### MANAGEMENT ENDPOINTS
 ```
-POST DELETE /maintenance        -> maintenance mode (enable, disable), authorization required
-GET /info                       -> build version information, authorization is not required
-GET /trace                      -> tracing last 10 requests, authorization required
-GET /health                     -> status about application (up/down/maintenance, etc.), authorization required for details
-GET /metrics                    -> jvm parameters (mem, threads, etc.), authorization required
+POST    /management/maintenance         -> enable maintenance mode, authorization required
+POST    /management/maintenance?mode=IMMEDIATE         -> enable maintenance mode, sessions killed by server, authorization required
+DELETE  /management/maintenance         -> disable maintenance mode, authorization required
+GET     /management/maintenance         -> get status about maintenance mode, authorization not required
+GET     /management/health              -> status about application (up/down/maintenance, etc.), authorization required for details
+GET     /management/info                -> build version information, authorization is not required
+GET     /management/trace               -> tracing last 10 requests, authorization required
+GET     /management/metrics             -> jvm parameters (mem, threads, etc.), authorization required
 ```
 
 ## APPLICATION CONFIGURATION
