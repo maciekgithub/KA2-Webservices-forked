@@ -27,14 +27,14 @@ See also the [wiki docs](https://redmine.euler.pl/projects/dokumentacja/wiki/WS_
 
 ##### MANAGEMENT ENDPOINTS
 ```
-POST    /management/maintenance         -> enable maintenance mode, authorization required
-POST    /management/maintenance?mode=IMMEDIATE         -> enable maintenance mode, sessions killed by server, authorization required
-DELETE  /management/maintenance         -> disable maintenance mode, authorization required
-GET     /management/maintenance         -> get status about maintenance mode, authorization not required
-GET     /management/health              -> status about application (up/down/maintenance, etc.), authorization required for details
-GET     /management/info                -> build version information, authorization is not required
-GET     /management/trace               -> tracing last 10 requests, authorization required
-GET     /management/metrics             -> jvm parameters (mem, threads, etc.), authorization required
+POST    /management/maintenance                     -> enable maintenance mode, authorization required
+POST    /management/maintenance?mode=IMMEDIATE      -> enable maintenance mode, sessions killed by server, authorization required
+DELETE  /management/maintenance                     -> disable maintenance mode, authorization required
+GET     /management/maintenance                     -> get status about maintenance mode, authorization not required
+GET     /management/health                          -> status about application (up/down/maintenance, etc.), authorization required for details
+GET     /management/info                            -> build version information, authorization is not required
+GET     /management/trace                           -> tracing last 10 requests, authorization required
+GET     /management/metrics                         -> jvm parameters (mem, threads, etc.), authorization required
 ```
 
 ## APPLICATION CONFIGURATION

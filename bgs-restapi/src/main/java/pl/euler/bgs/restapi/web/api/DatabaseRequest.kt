@@ -2,6 +2,7 @@ package pl.euler.bgs.restapi.web.api
 
 import org.apache.commons.lang3.StringUtils
 import org.springframework.http.HttpMethod
+import pl.euler.bgs.restapi.web.api.headers.ApiHeaders
 
 data class DatabaseRequest(val requestUrl: String, val requestMethod: HttpMethod, val requestParams: String, val headers: ApiHeaders, val requestJson: String) {
 

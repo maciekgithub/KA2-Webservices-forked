@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,13 +22,13 @@ import java.net.URLDecoder;
 @Api(value = "BGS REST API", description = "BGS REST API Endpoints")
 @SuppressWarnings("unused")
 @RequestMapping("/api")
-public class ApiController {
-    private static final Logger log = LoggerFactory.getLogger(ApiController.class);
+public class MetricsController {
+    private static final Logger log = LoggerFactory.getLogger(MetricsController.class);
 
     private final DatabaseService databaseService;
 
     @Autowired
-    public ApiController(DatabaseService databaseService) {
+    public MetricsController(DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 

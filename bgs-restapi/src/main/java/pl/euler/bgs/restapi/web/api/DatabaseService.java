@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
 import pl.euler.bgs.restapi.core.tracking.Tracked;
+import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
 import pl.euler.bgs.restapi.web.common.HttpCodeException;
 
 import java.io.StringReader;
