@@ -3,6 +3,7 @@ package pl.euler.bgs.restapi.web.api;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javaslang.control.Try;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 
 @RestController
+@Api(value = "BGS REST API", description = "BGS REST API Endpoints")
 @SuppressWarnings("unused")
 @RequestMapping("/api")
 public class ApiController {
@@ -41,6 +43,15 @@ public class ApiController {
                 .convertToWebResponse();
     }
 
+    @PostMapping("/lists")
+    @Timed(name = "POST /lists")
+    @ApiOperation("Create metric")
+    public ResponseEntity<JsonRawResponse> createList(ApiHeaders headers, @RequestBody JsonNode json) {
+        return databaseService
+                .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.POST, headers, json.toString()))
+                .convertToWebResponse();
+    }
+
     @PostMapping("/lists/{listName}")
     @Timed(name = "POST /lists/{listName}")
     @ApiOperation("Create new list without metric")
@@ -48,6 +59,16 @@ public class ApiController {
         String url = "/lists/" + listName;
         return databaseService
                 .executeRequestLogic(new DatabaseRequest(url, HttpMethod.POST, headers, json.toString()))
+                .convertToWebResponse();
+    }
+
+    @GetMapping("/lists")
+    @Timed(name = "GET /lists")
+    @ApiOperation("Get list of subscriber lists")
+    public ResponseEntity<JsonRawResponse> getSubscriberLists(HttpServletRequest request, ApiHeaders headers) {
+        String requestParams = Try.of(() -> URLDecoder.decode(request.getQueryString(), Charsets.UTF_8.name())).orElse("");
+        return databaseService
+                .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.GET, requestParams, headers))
                 .convertToWebResponse();
     }
 
@@ -62,15 +83,6 @@ public class ApiController {
                 .convertToWebResponse();
     }
 
-    @GetMapping("/lists")
-    @Timed(name = "GET /lists")
-    @ApiOperation("Get list of subscriber lists")
-    public ResponseEntity<JsonRawResponse> getSubscriberLists(HttpServletRequest request, ApiHeaders headers) {
-        String requestParams = Try.of(() -> URLDecoder.decode(request.getQueryString(), Charsets.UTF_8.name())).orElse("");
-        return databaseService
-                .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.GET, requestParams, headers))
-                .convertToWebResponse();
-    }
 
     @ApiOperation("Delete subscriber list")
     @Timed(name = "DELETE /lists")
