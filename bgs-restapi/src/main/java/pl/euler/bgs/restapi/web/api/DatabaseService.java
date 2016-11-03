@@ -2,6 +2,8 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.io.CharStreams;
+import javaslang.control.Option;
+import javaslang.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,9 +81,11 @@ public class DatabaseService {
             }, declaredParameters);
 
             Clob responseBody = (Clob) result.get(RESPONSE_BODY_PARAM);
-            String responseJson = CharStreams.toString(responseBody.getCharacterStream());
+            Option<String> optionalJson = Option.of(responseBody)
+                    .map(rb -> Try.of(rb::getCharacterStream).map(CharStreams::toString).get());
+
             int status = ((BigDecimal) result.get(RESPONSE_STATUS_PARAM)).intValue();
-            DatabaseResponse dbResponse = new DatabaseResponse(responseJson, status);
+            DatabaseResponse dbResponse = new DatabaseResponse(optionalJson, status);
             log.info("return response: {}", dbResponse.infoLog());
             return dbResponse;
         } catch (RecoverableDataAccessException dataException) {
