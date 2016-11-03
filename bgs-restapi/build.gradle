@@ -93,7 +93,7 @@ dependencies {
 	}
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 
-//	optional "org.springframework.boot:spring-boot-configuration-processor"
+	optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 
 compileJava.dependsOn(processResources)

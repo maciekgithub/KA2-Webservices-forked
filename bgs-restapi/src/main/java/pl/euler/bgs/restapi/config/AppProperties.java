@@ -9,6 +9,8 @@ public class AppProperties {
 
     private final Genapi genapi = new Genapi();
 
+    private final Swagger swagger = new Swagger();
+
     public Metrics getMetrics() {
         return metrics;
     }
@@ -57,6 +59,18 @@ public class AppProperties {
             public void setSummaryTracking(boolean summaryTracking) {
                 this.summaryTracking = summaryTracking;
             }
+        }
+    }
+
+    public static class Swagger {
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 

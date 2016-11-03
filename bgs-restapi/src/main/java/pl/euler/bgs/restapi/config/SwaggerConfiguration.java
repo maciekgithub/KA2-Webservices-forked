@@ -1,6 +1,7 @@
 package pl.euler.bgs.restapi.config;
 
 import com.google.common.base.Predicate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import static springfox.documentation.builders.PathSelectors.ant;
 @Controller
 @EnableSwagger2
 @SuppressWarnings("unused")
+@ConditionalOnProperty(value = "app.swagger.enabled", havingValue = "true", matchIfMissing = true)
 public class SwaggerConfiguration {
 
     @Bean
