@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+//@Profile("!test")
 public class DatabaseService {
     private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
 
