@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import pl.euler.bgs.restapi.web.maintenance.MaintenanceService;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

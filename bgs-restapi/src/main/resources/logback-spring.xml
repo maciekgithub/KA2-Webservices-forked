@@ -45,7 +45,7 @@
             </triggeringPolicy>
         </appender>
 
-        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <appender name="BGS-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <encoder>
                 <pattern>${FILE_LOG_PATTERN}</pattern>
             </encoder>
@@ -60,7 +60,7 @@
         </appender>
 
         <root level="INFO">
-            <appender-ref ref="FILE" />
+            <appender-ref ref="BGS-FILE" />
         </root>
 
         <logger name="summary-tracking" level="INFO" additivity="false" >

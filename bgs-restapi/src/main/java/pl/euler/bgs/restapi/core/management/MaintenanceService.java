@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.web.maintenance;
+package pl.euler.bgs.restapi.core.management;
 
 import com.google.common.base.Preconditions;
 import com.zaxxer.hikari.HikariDataSource;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.euler.bgs.restapi.core.management.MaintenanceTriggerMode;
 
 import javax.sql.DataSource;
 
@@ -27,7 +26,7 @@ public class MaintenanceService {
         this.unwrappedDataSource = Try.of(() -> dataSource.unwrap(HikariDataSource.class)).get();
     }
 
-    void turnOnMaintenanceMode(MaintenanceTriggerMode mode) {
+    public void turnOnMaintenanceMode(MaintenanceTriggerMode mode) {
         log.info("Enabling maintenance mode with trigger: {}", mode);
         MAINTENANCE_MODE = true;
         if (MaintenanceTriggerMode.NORMAL.equals(mode)) {
@@ -38,7 +37,7 @@ public class MaintenanceService {
         poolOption.forEach(HikariPool::softEvictConnections);
     }
 
-    void turnOffMaintenanceMode() {
+    public void turnOffMaintenanceMode() {
         MAINTENANCE_MODE = false;
         this.unwrappedDataSource.resumePool();
     }

@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.web.maintenance;
+package pl.euler.bgs.restapi.web.management;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,7 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.euler.bgs.restapi.core.management.MaintenanceHealthIndicator;
+import pl.euler.bgs.restapi.core.management.MaintenanceService;
 import pl.euler.bgs.restapi.core.management.MaintenanceTriggerMode;
 
 @RestController
