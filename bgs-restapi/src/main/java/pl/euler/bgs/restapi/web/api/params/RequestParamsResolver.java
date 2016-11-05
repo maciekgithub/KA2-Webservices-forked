@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.web.api;
+package pl.euler.bgs.restapi.web.api.params;
 
 import com.google.common.base.Charsets;
 import javaslang.control.Try;

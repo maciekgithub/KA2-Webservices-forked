@@ -2,23 +2,19 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController
-@Api(value = "BGS REST API", description = "BGS REST API Endpoints")
-@SuppressWarnings("unused")
-@RequestMapping("/api")
+@ApiController
 public class MetricsController {
     private static final Logger log = LoggerFactory.getLogger(MetricsController.class);
 
@@ -32,18 +28,18 @@ public class MetricsController {
     @GetMapping("/dictionaries")
     @Timed(name = "GET /dictionaries")
     @ApiOperation("Metric dictionary")
-    public ResponseEntity<JsonRawResponse> getDictionaries(ApiHeaders headers, HttpServletRequest request) {
+    public ResponseEntity<JsonRawResponse> getDictionaries(ApiHeaders headers, RequestParams params) {
         return databaseService
-                .executeRequestLogic(new DatabaseRequest("/dictionaries", HttpMethod.GET , headers))
+                .executeRequestLogic(new DatabaseRequest("/dictionaries", params, headers))
                 .convertToWebResponse();
     }
 
     @PostMapping("/lists")
     @Timed(name = "POST /lists")
     @ApiOperation("Create metric")
-    public ResponseEntity<JsonRawResponse> createList(ApiHeaders headers, @RequestBody JsonNode json) {
+    public ResponseEntity<JsonRawResponse> createList(ApiHeaders headers, RequestParams params, @RequestBody JsonNode json) {
         return databaseService
-                .executeRequestLogic(new DatabaseRequest("/lists", HttpMethod.POST, headers, json.toString()))
+                .executeRequestLogic(new DatabaseRequest("/lists", params, headers, json.toString()))
                 .convertToWebResponse();
     }
 
@@ -83,10 +79,10 @@ public class MetricsController {
     @ApiOperation("Delete subscriber list")
     @Timed(name = "DELETE /lists")
     @DeleteMapping("/lists/{listName}")
-    public ResponseEntity<JsonRawResponse> deleteSubscriberList(ApiHeaders headers, @PathVariable String listName) {
+    public ResponseEntity<JsonRawResponse> deleteSubscriberList(ApiHeaders headers, RequestParams params, @PathVariable String listName) {
         String url = "/lists/"+listName;
         return databaseService
-                .executeRequestLogic(new DatabaseRequest(url, HttpMethod.DELETE, headers))
+                .executeRequestLogic(new DatabaseRequest(url, params, headers))
                 .convertToWebResponse();
     }
 
