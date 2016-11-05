@@ -3,6 +3,7 @@ package pl.euler.bgs.restapi.web.api;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.ApiOperation;
+import javaslang.control.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +35,21 @@ public class MetricsController {
     @Timed(name = "POST /lists")
     @ApiOperation("Create metric")
     public ResponseEntity<JsonRawResponse> createList(RequestParams params, @RequestBody JsonNode json) {
-        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, Option.of(json))).convertToWebResponse();
     }
 
-    @RequestMapping(path = "/lists/{listName}", method = {RequestMethod.POST, RequestMethod.PUT})
-    @Timed(name = "POST/PUT /lists/{listName}")
+    @PutMapping(path = "/lists/{listName}")
+    @Timed(name = "PUT /lists/{listName}")
     @ApiOperation("Create new list without metric")
-    public ResponseEntity<JsonRawResponse> createList(@RequestBody JsonNode json, RequestParams params) {
-        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
+    public ResponseEntity<JsonRawResponse> createListPut(@RequestBody(required = false) JsonNode json, RequestParams params) {
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, Option.of(json))).convertToWebResponse();
+    }
+
+    @PostMapping(path = "/lists/{listName}")
+    @Timed(name = "POST /lists/{listName}")
+    @ApiOperation("Create new list without metric")
+    public ResponseEntity<JsonRawResponse> createListPost(@RequestBody JsonNode json, RequestParams params) {
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, Option.of(json))).convertToWebResponse();
     }
 
     @GetMapping("/lists")

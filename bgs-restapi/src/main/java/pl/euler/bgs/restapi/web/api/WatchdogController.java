@@ -2,6 +2,7 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
+import javaslang.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +29,13 @@ public class WatchdogController {
     @PostMapping(path = {"/wg", "/wg/{wgName}", "/wg/{wgName}/subscriptions", "/wg/{wgName}/subscriptions/{msisdn}"})
     @Timed(name = "POST /wg/...")
     public ResponseEntity<JsonRawResponse> post(RequestParams params, @RequestBody JsonNode json) {
-        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, Option.of(json))).convertToWebResponse();
     }
 
     @PutMapping(path = {"/wg/{wgName}/start", "/wg/{wgName}/stop"})
     @Timed(name = "PUT /wg/{wgName}/start|stop")
-    public ResponseEntity<JsonRawResponse> put(RequestParams params, @RequestBody JsonNode json) {
-        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
+    public ResponseEntity<JsonRawResponse> put(RequestParams params, @RequestBody(required = false) JsonNode json) {
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, Option.of(json))).convertToWebResponse();
     }
 
     @DeleteMapping(path = { "/wg/{wgName}", "/wg/{wgName}/subscriptions/{msisdn}"})
