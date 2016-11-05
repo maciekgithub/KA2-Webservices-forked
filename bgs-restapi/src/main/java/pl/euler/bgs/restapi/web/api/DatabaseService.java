@@ -63,7 +63,7 @@ public class DatabaseService {
         declaredParameters.add(new SqlOutParameter(RESPONSE_STATUS_PARAM, Types.NUMERIC));
         declaredParameters.add(new SqlOutParameter(RESPONSE_BODY_PARAM, Types.CLOB));
 
-        ApiHeaders headers = request.getHeaders();
+        ApiHeaders headers = request.getParams().getHeaders();
         RequestParams requestParams = request.getParams();
 
         try {
@@ -74,7 +74,7 @@ public class DatabaseService {
                 statement.setString(3, requestParams.getUrlParams());
                 statement.setString(4, headers.getUserAgent());
                 statement.setString(5, headers.getDate());
-                statement.setString(6, headers.getContentType());
+                statement.setString(6, headers.getAcceptType());
                 statement.setCharacterStream(7, new StringReader(request.getRequestJson()), request.getRequestJson().length());
                 statement.registerOutParameter(8, Types.NUMERIC);
                 statement.registerOutParameter(9, Types.CLOB);

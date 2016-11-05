@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import pl.euler.bgs.restapi.web.api.params.ApiHeaders;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
@@ -24,9 +23,9 @@ public class ImeiController {
     @PostMapping("/imei")
     @Timed(name = "POST /imei")
     @ApiOperation("Notification from IMEI Tracking")
-    public ResponseEntity<JsonRawResponse> imeiNotification(ApiHeaders headers, @RequestBody JsonNode json, RequestParams params) {
+    public ResponseEntity<JsonRawResponse> imeiNotification(@RequestBody JsonNode json, RequestParams params) {
         return databaseService
-                .executeRequestLogic(new DatabaseRequest("/imei", params, headers, json.toString()))
+                .executeRequestLogic(new DatabaseRequest("/imei", params, json.toString()))
                 .convertToWebResponse();
     }
 
