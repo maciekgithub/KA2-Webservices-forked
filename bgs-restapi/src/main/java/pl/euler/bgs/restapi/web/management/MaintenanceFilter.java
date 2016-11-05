@@ -1,8 +1,9 @@
-package pl.euler.bgs.restapi.web.maintenance;
+package pl.euler.bgs.restapi.web.management;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
+import pl.euler.bgs.restapi.core.management.MaintenanceService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

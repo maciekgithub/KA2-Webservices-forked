@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import pl.euler.bgs.restapi.core.management.MaintenanceTriggerMode;
 import pl.euler.bgs.restapi.web.api.headers.IncorrectHeaderException;
 import pl.euler.bgs.restapi.web.api.headers.MissingHeaderException;
+import pl.euler.bgs.restapi.web.management.MaintenanceController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class GlobalControllerAdvice {
     @InitBinder
     public void initBinder(WebDataBinder dataBinder) {
         dataBinder.registerCustomEditor(MaintenanceTriggerMode.class, new CaseInsensitiveEnumConverter<>(MaintenanceTriggerMode.class));
+        dataBinder.registerCustomEditor(MaintenanceController.LogFileMode.class, new CaseInsensitiveEnumConverter<>(MaintenanceController.LogFileMode.class));
     }
 
     /**

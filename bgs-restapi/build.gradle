@@ -66,11 +66,13 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-devtools'
 	compile 'org.springframework.boot:spring-boot-starter-aop'
 	compile('org.springframework.boot:spring-boot-starter-security')
+	compile "org.springframework.boot:spring-boot-configuration-processor"
 	compile 'io.springfox:springfox-swagger2:2.6.0'
 	compile 'io.springfox:springfox-swagger-ui:2.6.0'
+	compile 'com.javaslang:javaslang:1.2.3'
 	compile 'com.google.guava:guava:19.0'
 	compile 'org.apache.commons:commons-lang3:3.4'
-	compile 'com.javaslang:javaslang:1.2.3'
+	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 	compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.7.5"
 	compile 'com.zaxxer:HikariCP:2.5.1'
@@ -92,8 +94,7 @@ dependencies {
 		exclude(module: 'metrics-healthchecks')
 	}
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
-
-	compile "org.springframework.boot:spring-boot-configuration-processor"
+	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.5.2'
 }
 
 compileJava.dependsOn(processResources)
