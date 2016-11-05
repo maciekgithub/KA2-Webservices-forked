@@ -14,7 +14,8 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
 import pl.euler.bgs.restapi.core.tracking.Tracked;
-import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.HttpCodeException;
 
 import java.io.StringReader;
@@ -62,18 +63,18 @@ public class DatabaseService {
         declaredParameters.add(new SqlOutParameter(RESPONSE_STATUS_PARAM, Types.NUMERIC));
         declaredParameters.add(new SqlOutParameter(RESPONSE_BODY_PARAM, Types.CLOB));
 
-        ApiHeaders headers = request.getHeaders();
+        ApiHeaders headers = request.getParams().getHeaders();
         RequestParams requestParams = request.getParams();
 
         try {
             Map<String, Object> result = this.jdbcTemplate.call(con -> {
                 CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
-                statement.setString(1, request.getRequestUrl());
+                statement.setString(1, requestParams.getUrl());
                 statement.setString(2, requestParams.getHttpMethod().name());
                 statement.setString(3, requestParams.getUrlParams());
                 statement.setString(4, headers.getUserAgent());
                 statement.setString(5, headers.getDate());
-                statement.setString(6, headers.getContentType());
+                statement.setString(6, headers.getAcceptType());
                 statement.setCharacterStream(7, new StringReader(request.getRequestJson()), request.getRequestJson().length());
                 statement.registerOutParameter(8, Types.NUMERIC);
                 statement.registerOutParameter(9, Types.CLOB);

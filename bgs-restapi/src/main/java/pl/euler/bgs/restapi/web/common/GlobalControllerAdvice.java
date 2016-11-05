@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import pl.euler.bgs.restapi.core.management.MaintenanceTriggerMode;
-import pl.euler.bgs.restapi.web.api.headers.IncorrectHeaderException;
-import pl.euler.bgs.restapi.web.api.headers.MissingHeaderException;
+import pl.euler.bgs.restapi.web.api.params.IncorrectHeaderException;
+import pl.euler.bgs.restapi.web.api.params.MissingHeaderException;
 import pl.euler.bgs.restapi.web.management.MaintenanceController;
 
 import javax.servlet.http.HttpServletResponse;

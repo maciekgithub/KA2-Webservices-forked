@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pl.euler.bgs.restapi.web.api.RequestParams;
-import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.RequestParams;
 
 @RestController
 public class TestNotificationsController {
@@ -17,8 +16,8 @@ public class TestNotificationsController {
 
     @PostMapping("/testnotification")
     @ResponseStatus(HttpStatus.OK)
-    public void logNotification(ApiHeaders apiHeaders, RequestParams params, @RequestBody JsonNode json) {
-        log.info("Test notification. Headers: {}, Request params: {}, JSON: {}", apiHeaders, params, json);
+    public void logNotification(RequestParams params, @RequestBody JsonNode json) {
+        log.info("Test notification. Request params: {}, JSON: {}", params, json);
     }
 
 }
