@@ -11,6 +11,7 @@ import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 @ApiController
+@SuppressWarnings("unused")
 public class ImeiController {
 
     private final DatabaseService databaseService;
@@ -24,9 +25,7 @@ public class ImeiController {
     @Timed(name = "POST /imei")
     @ApiOperation("Notification from IMEI Tracking")
     public ResponseEntity<JsonRawResponse> imeiNotification(@RequestBody JsonNode json, RequestParams params) {
-        return databaseService
-                .executeRequestLogic(new DatabaseRequest("/imei", params, json.toString()))
-                .convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
     }
 
 }

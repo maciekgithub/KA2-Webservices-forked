@@ -12,6 +12,7 @@ import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 @ApiController
+@SuppressWarnings("unused")
 public class MetricsController {
     private static final Logger log = LoggerFactory.getLogger(MetricsController.class);
 
@@ -26,45 +27,42 @@ public class MetricsController {
     @Timed(name = "GET /dictionaries")
     @ApiOperation("Metric dictionary")
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params) {
-        return databaseService.executeRequestLogic(new DatabaseRequest("/dictionaries", params)).convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params)).convertToWebResponse();
     }
 
     @PostMapping("/lists")
     @Timed(name = "POST /lists")
     @ApiOperation("Create metric")
     public ResponseEntity<JsonRawResponse> createList(RequestParams params, @RequestBody JsonNode json) {
-        return databaseService.executeRequestLogic(new DatabaseRequest("/lists", params, json.toString())).convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
     }
 
     @RequestMapping(path = "/lists/{listName}", method = {RequestMethod.POST, RequestMethod.PUT})
     @Timed(name = "POST/PUT /lists/{listName}")
     @ApiOperation("Create new list without metric")
-    public ResponseEntity<JsonRawResponse> createList(@PathVariable String listName, @RequestBody JsonNode json, RequestParams params) {
-        String url = "/lists/" + listName;
-        return databaseService.executeRequestLogic(new DatabaseRequest(url, params, json.toString())).convertToWebResponse();
+    public ResponseEntity<JsonRawResponse> createList(@RequestBody JsonNode json, RequestParams params) {
+        return databaseService.executeRequestLogic(new DatabaseRequest(params, json.toString())).convertToWebResponse();
     }
 
     @GetMapping("/lists")
     @Timed(name = "GET /lists")
     @ApiOperation("Get list of subscriber lists")
     public ResponseEntity<JsonRawResponse> getSubscriberLists(RequestParams params) {
-        return databaseService.executeRequestLogic(new DatabaseRequest("/lists", params)).convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params)).convertToWebResponse();
     }
 
     @GetMapping("/lists/{listName}")
     @Timed(name = "GET /lists/{listName}")
     @ApiOperation("Get content of subscriber list")
-    public ResponseEntity<JsonRawResponse> getSpecificSubscriberList(@PathVariable String listName, RequestParams params) {
-        String url = "/lists/" + listName;
-        return databaseService.executeRequestLogic(new DatabaseRequest(url, params)).convertToWebResponse();
+    public ResponseEntity<JsonRawResponse> getSpecificSubscriberList(RequestParams params) {
+        return databaseService.executeRequestLogic(new DatabaseRequest(params)).convertToWebResponse();
     }
 
     @ApiOperation("Delete subscriber list")
     @Timed(name = "DELETE /lists")
     @DeleteMapping("/lists/{listName}")
-    public ResponseEntity<JsonRawResponse> deleteSubscriberList(RequestParams params, @PathVariable String listName) {
-        String url = "/lists/"+listName;
-        return databaseService.executeRequestLogic(new DatabaseRequest(url, params)).convertToWebResponse();
+    public ResponseEntity<JsonRawResponse> deleteSubscriberList(RequestParams params) {
+        return databaseService.executeRequestLogic(new DatabaseRequest(params)).convertToWebResponse();
     }
 
 }

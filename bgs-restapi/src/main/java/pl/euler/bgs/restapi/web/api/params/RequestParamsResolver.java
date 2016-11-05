@@ -1,16 +1,18 @@
 package pl.euler.bgs.restapi.web.api.params;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.MoreObjects;
 import javaslang.control.Option;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.util.UrlPathHelper;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.net.URLDecoder.decode;
 import static java.util.Objects.isNull;
 import static javaslang.control.Try.of;
@@ -21,6 +23,7 @@ import static org.apache.http.entity.ContentType.WILDCARD;
  * Resolver which checks the required api headers for each request and retrieve optional parameters.
  */
 public class RequestParamsResolver implements HandlerMethodArgumentResolver {
+    public static final String API_PREFIX = "/api";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -37,9 +40,8 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         if (isNull(userAgent) || isNull(date)) {
             throw new MissingHeaderException("There is no User-Agent / Date headers on the request!");
         }
-        String contentType = MoreObjects.firstNonNull(accept, APPLICATION_JSON.getMimeType());
 
-        if (!isJsonOrWildcardContentType(contentType)) {
+        if (!isJsonOrWildcardContentType(firstNonNull(accept, APPLICATION_JSON.getMimeType()))) {
             throw new IncorrectHeaderException(String.format("We support only %s as response type!", APPLICATION_JSON.getMimeType()));
         }
         ApiHeaders apiHeaders = new ApiHeaders(userAgent, date, accept);
@@ -47,7 +49,11 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest nativeRequest = webRequest.getNativeRequest(HttpServletRequest.class);
         Option<String> requestParamsOption = of(() -> decode(nativeRequest.getQueryString(), Charsets.UTF_8.name())).toOption();
         HttpMethod httpMethod = HttpMethod.resolve(nativeRequest.getMethod());
-        return new RequestParams(httpMethod, apiHeaders, requestParamsOption);
+
+        String pathWithinApplication = new UrlPathHelper().getPathWithinApplication(nativeRequest);
+        String requestUrl = StringUtils.replaceOnce(pathWithinApplication, API_PREFIX, "");
+
+        return new RequestParams(requestUrl, httpMethod, apiHeaders, requestParamsOption);
     }
 
     private boolean isJsonOrWildcardContentType(String contentType) {

@@ -69,7 +69,7 @@ public class DatabaseService {
         try {
             Map<String, Object> result = this.jdbcTemplate.call(con -> {
                 CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
-                statement.setString(1, request.getRequestUrl());
+                statement.setString(1, requestParams.getUrl());
                 statement.setString(2, requestParams.getHttpMethod().name());
                 statement.setString(3, requestParams.getUrlParams());
                 statement.setString(4, headers.getUserAgent());

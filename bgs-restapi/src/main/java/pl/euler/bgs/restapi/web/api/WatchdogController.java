@@ -8,6 +8,7 @@ import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 @ApiController
+@SuppressWarnings("unused")
 public class WatchdogController {
 
     private final DatabaseService databaseService;
@@ -20,7 +21,7 @@ public class WatchdogController {
     @GetMapping("/wg")
     @Timed(name = "GET /wg")
     public ResponseEntity<JsonRawResponse> getWatchdog(RequestParams params) {
-        return databaseService.executeRequestLogic(new DatabaseRequest("/wg", params)).convertToWebResponse();
+        return databaseService.executeRequestLogic(new DatabaseRequest(params)).convertToWebResponse();
     }
 
 }
