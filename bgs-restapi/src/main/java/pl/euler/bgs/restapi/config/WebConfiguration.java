@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver;
-import pl.euler.bgs.restapi.web.api.headers.ApiHeadersResolver;
+import pl.euler.bgs.restapi.web.api.params.ApiHeadersResolver;
 
 import java.util.List;
 

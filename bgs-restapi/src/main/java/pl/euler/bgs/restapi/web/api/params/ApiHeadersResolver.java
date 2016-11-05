@@ -1,4 +1,4 @@
-package pl.euler.bgs.restapi.web.api.headers;
+package pl.euler.bgs.restapi.web.api.params;
 
 import com.google.common.base.MoreObjects;
 import org.springframework.core.MethodParameter;

@@ -1,7 +1,7 @@
 package pl.euler.bgs.restapi.web.api
 
 import org.apache.commons.lang3.StringUtils
-import pl.euler.bgs.restapi.web.api.headers.ApiHeaders
+import pl.euler.bgs.restapi.web.api.params.ApiHeaders
 import pl.euler.bgs.restapi.web.api.params.RequestParams
 
 data class DatabaseRequest(val requestUrl: String, val params: RequestParams, val headers: ApiHeaders, val requestJson: String) {

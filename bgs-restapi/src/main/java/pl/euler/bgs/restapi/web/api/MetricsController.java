@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.ApiHeaders;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
