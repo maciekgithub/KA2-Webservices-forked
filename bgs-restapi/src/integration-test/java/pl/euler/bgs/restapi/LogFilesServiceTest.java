@@ -24,10 +24,24 @@ public class LogFilesServiceTest {
     @Test
     public void shouldGetInfoAboutMainLogFileAppender() throws Exception {
         // when
-        Option<File> mainBgsLogFile = filesService.getMainBgsLogFile();
+        Option<File> mainBgsLogFile = filesService.getLogFile("bgs.log");
 
         // then
         assertThat(mainBgsLogFile.isDefined());
+    }
+
+    @Test
+    public void shouldGetTailOfTheLogFile() throws Exception {
+        // setup
+        Option<File> mainBgsLogFile = filesService.getLogFile("bgs.log");
+        assertThat(mainBgsLogFile.isDefined());
+        File logFile = mainBgsLogFile.get();
+
+        // when
+        String tailOfTheFile = filesService.getTailOfTheFile(logFile, 10);
+
+        // then
+        assertThat(tailOfTheFile).isNotEmpty();
     }
 
 }
