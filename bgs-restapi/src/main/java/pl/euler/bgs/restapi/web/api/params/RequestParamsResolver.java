@@ -52,7 +52,9 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         HttpMethod httpMethod = HttpMethod.resolve(nativeRequest.getMethod());
 
         String pathWithinApplication = new UrlPathHelper().getPathWithinApplication(nativeRequest);
+        // cut off the /api and /gapi prefixes
         String requestUrl = StringUtils.replaceOnce(pathWithinApplication, API_PREFIX, "");
+        requestUrl = StringUtils.replaceOnce(requestUrl, GAPI_PREFIX, "");
 
         return new RequestParams(requestUrl, httpMethod, apiHeaders, requestParamsOption);
     }
