@@ -1,4 +1,4 @@
-## Installation
+## INSTALLATION
 
 ```
 bower install
@@ -6,9 +6,6 @@ gradlew clean build
 cd build\libs
 java -jar bgs-restapi-{VERSION}.jar
 ```
-
-NOTE: The version above tag 0.1.0 needs database oracle connection to start up. If you need the version for mocking the genapi please
-use the version from mentioned tag.
 
 ##### Integration testing
 
@@ -26,6 +23,7 @@ REST API documentation is available by Swagger under [/api-docs](http://localhos
 See also the [wiki docs](https://redmine.euler.pl/projects/dokumentacja/wiki/WS_API).
 
 ##### MANAGEMENT ENDPOINTS
+
 ```
 POST    /management/maintenance                     -> enable maintenance mode, authorization required
 POST    /management/maintenance?mode=IMMEDIATE      -> enable maintenance mode, sessions killed by server, authorization required
@@ -35,12 +33,29 @@ GET     /management/health                          -> status about application 
 GET     /management/info                            -> build version information, authorization is not required
 GET     /management/trace                           -> tracing last 10 requests, authorization required
 GET     /management/metrics                         -> jvm parameters (mem, threads, etc.), authorization required
+GET     /management/log/{fileName}                  -> downlaod log file from last 24H, ie. GET /management/log/bgs.log or /management/log/bgs (without suffix .log will work to)
+GET     /management/log/bgs?mode=display&lines=150  -> display in browser last 150 lines of log file (for example from bgs.log file), default values for parameters: lines=200, mode=download
 ```
 
-## APPLICATION CONFIGURATION
+## APPLICATION CONFIGURATION & DEPLOYMENT
 
 In order to set configuration parameters for specific instance please put `application.properties` file on the same 
 directory where the JAR file has been located.
+
+##### ACTIVE PROFILE
+
+Default active profile is set to dev. This profile has set logging to console and has disabled some features like Swagger docs
+and details tracking.
+
+```
+spring.profiles.active=dev
+```
+
+Suggested profile for production-ready system (with enabled all features):
+ 
+```
+spring.profiles.active=prod
+```
 
 ##### DB PARAMETERS
 
@@ -52,7 +67,15 @@ spring.datasource.username=bgs
 spring.datasource.password=bgs
 ```
 
-You can reconfigure them for your user.
+You can reconfigure them for your user and environment.
+
+##### ORACLE FAILOVER SUPPORT
+
+In order to enable failover feature on Oracle you have to specify the connection by the following way:
+
+```
+spring.datasource.url= jdbc:oracle:thin:@(DESCRIPTION=(LOAD_BALANCE=OFF)(FAILOVER=ON)(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=xe)))
+```
 
 ##### LOGGING
 
@@ -69,9 +92,17 @@ LOG_FILE_SUMMARY_TRACKING -> file path & name for services statistics
 LOG_FILE_DETAILS_TRACKING -> file path & name for details tracking
 ```
 
+There are some additional properties to enable/disable logging features:
+
+```
+app.metrics.logs.details-tracking=true      -> should we log all input and output parameters for methods marked by @Tracked withing application
+app.metrics.logs.summary-tracking=true      -> enable/disable performance statistics for methods marked by @Timed withing application 
+app.metrics.logs.report-frequency=60        -> interval for summary tracking statistics in seconds
+```
+
 ##### SSL SUPPORT
 
-The application provides the SSL support. In order to enable SSL the profile `ssl` should be enabled. With this profile application starts
+The application provides the SSL support. In order to enable SSL the additional profile `ssl` should be enabled. With this profile application starts
 working on standard HTTPS port **443**. Currently mutual SSL authentication is not enabled.
 
 The server certificate is signed by self generated and self signed CA so if you want avoid the untrusted certificate problem please import our CA authority
@@ -85,20 +116,6 @@ to trusted authorities on you machine. With this step you wan't see the issue th
 - There will be a pop up window that will ask you if you want to install this certificate.
 
 You will find server certificates files (private, csr, public) on `/etc/certificates` directory.
-
-##### ACTIVE PROFILE
-
-Default active profile is set to dev. This profile has set logging to console.
-
-```
-spring.profiles.active=dev
-```
-
-Suggested profile for production-ready system:
- 
-```
-spring.profiles.active=prod,ssl
-```
 
 ##### BUILD WAR & DEPLOY TO GLASSFISH
 
