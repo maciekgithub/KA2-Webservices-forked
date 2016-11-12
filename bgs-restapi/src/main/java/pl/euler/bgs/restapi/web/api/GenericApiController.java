@@ -36,7 +36,7 @@ public class GenericApiController {
         this.databaseService = databaseService;
     }
 
-    @RequestMapping(value = "/*", method = {GET, PUT, POST, DELETE})
+    @RequestMapping(value = "/**", method = {GET, PUT, POST, DELETE})
     @Timed(name = "GAPI")
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params, @RequestBody(required = false) JsonNode json,
             HttpServletRequest request) {
@@ -56,8 +56,10 @@ public class GenericApiController {
     private Endpoint getMatchedEndpoint(HttpServletRequest request, Collection<Endpoint> endpoints) {
         HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());
 
+        boolean endsWithSlash = Endpoint.HttpUtils.isPathEndsWithSlash(request);
+        // if request path ends with slash we'are adding the slash to the saved endpoint to match it
         List<Endpoint> matchedEndpoints = List.ofAll(endpoints)
-                .filter(e -> new AntPathRequestMatcher(e.getUrl()).matches(request) && httpMethod.equals(e.getHttpMethod()));
+                .filter(e -> new AntPathRequestMatcher(endsWithSlash ? e.getUrl() + "/" : e.getUrl(), e.getHttpMethod().name()).matches(request));
 
         if (matchedEndpoints.isEmpty()) {
             throw new BadRequestException("There is no matching endpoint for provided request!");

@@ -3,14 +3,13 @@ package pl.euler.bgs.restapi.web.api.params;
 import com.google.common.base.Charsets;
 import javaslang.control.Option;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.springframework.web.util.UrlPathHelper;
+import pl.euler.bgs.restapi.web.api.Endpoint;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.net.URLDecoder.decode;
@@ -51,11 +50,7 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         Option<String> requestParamsOption = of(() -> decode(nativeRequest.getQueryString(), Charsets.UTF_8.name())).toOption();
         HttpMethod httpMethod = HttpMethod.resolve(nativeRequest.getMethod());
 
-        String pathWithinApplication = new UrlPathHelper().getPathWithinApplication(nativeRequest);
-        // cut off the /api and /gapi prefixes
-        String requestUrl = StringUtils.replaceOnce(pathWithinApplication, API_PREFIX, "");
-        requestUrl = StringUtils.replaceOnce(requestUrl, GAPI_PREFIX, "");
-
+        String requestUrl = Endpoint.HttpUtils.getEndpointUrl(nativeRequest);
         return new RequestParams(requestUrl, httpMethod, apiHeaders, requestParamsOption);
     }
 
