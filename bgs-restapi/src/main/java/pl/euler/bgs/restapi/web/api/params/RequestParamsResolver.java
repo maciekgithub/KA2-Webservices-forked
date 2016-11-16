@@ -50,7 +50,7 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         Option<String> requestParamsOption = of(() -> decode(nativeRequest.getQueryString(), Charsets.UTF_8.name())).toOption();
         HttpMethod httpMethod = HttpMethod.resolve(nativeRequest.getMethod());
 
-        String requestUrl = Endpoint.HttpUtils.getEndpointUrl(nativeRequest);
+        String requestUrl = Endpoint.getEndpointUrl(nativeRequest);
         return new RequestParams(requestUrl, httpMethod, apiHeaders, requestParamsOption);
     }
 

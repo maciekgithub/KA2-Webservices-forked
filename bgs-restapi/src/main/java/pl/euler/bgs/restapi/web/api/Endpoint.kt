@@ -8,12 +8,13 @@ import javax.servlet.http.HttpServletRequest
 
 data class Endpoint(val requestType: String, val httpMethod : HttpMethod, val url : String) {
 
-    companion object HttpUtils {
+    companion object {
         /**
          * Retrieve endpoint address which is provided to database service.
          *
          * The /api and /gapi prefix is removed and the ending slash too
          */
+        @JvmStatic
         fun getEndpointUrl(request: HttpServletRequest): String {
             val pathWithinApplication = UrlPathHelper().getPathWithinApplication(request)
             return pathWithinApplication.replaceFirst(API_PREFIX, "").replaceFirst(GAPI_PREFIX, "").removeSuffix("/")
@@ -22,6 +23,7 @@ data class Endpoint(val requestType: String, val httpMethod : HttpMethod, val ur
         /**
          * Checks whether provided request ends with slash.
          */
+        @JvmStatic
         fun isPathEndsWithSlash(request: HttpServletRequest): Boolean {
             var url = request.servletPath
             if (request.pathInfo != null) {

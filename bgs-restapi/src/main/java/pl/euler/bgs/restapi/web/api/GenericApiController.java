@@ -56,7 +56,7 @@ public class GenericApiController {
     private Endpoint getMatchedEndpoint(HttpServletRequest request, Collection<Endpoint> endpoints) {
         HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());
 
-        boolean endsWithSlash = Endpoint.HttpUtils.isPathEndsWithSlash(request);
+        boolean endsWithSlash = Endpoint.isPathEndsWithSlash(request);
         // if request path ends with slash we'are adding the slash to the saved endpoint to match it
         List<Endpoint> matchedEndpoints = List.ofAll(endpoints)
                 .filter(e -> new AntPathRequestMatcher(endsWithSlash ? e.getUrl() + "/" : e.getUrl(), e.getHttpMethod().name()).matches(request));
