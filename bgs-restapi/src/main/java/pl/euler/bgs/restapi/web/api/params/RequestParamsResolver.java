@@ -3,6 +3,7 @@ package pl.euler.bgs.restapi.web.api.params;
 import com.google.common.base.Charsets;
 import javaslang.control.Option;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -34,7 +35,7 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-        String userAgent = webRequest.getHeader("User-Agent");
+        String userAgent = StringUtils.upperCase(webRequest.getHeader("User-Agent"));
         String date = webRequest.getHeader("Date");
         String accept = webRequest.getHeader("Accept");
         if (isNull(userAgent) || isNull(date)) {
