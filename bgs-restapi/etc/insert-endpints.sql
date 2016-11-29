@@ -25,5 +25,5 @@ insert into bgs_webservices.wbs_endpoints(request_type, request_method, url) val
 insert into bgs_webservices.wbs_endpoints(request_type, request_method, url) values('updSubscriptionList','post','/wg/{wg_name}/subscriptions');
 insert into bgs_webservices.wbs_endpoints(request_type, request_method, url) values('delSubscription','delete','/wg/{wg_name}/subscriptions/{msisdn}');
 insert into bgs_webservices.wbs_endpoints(request_type, request_method, url) values('creSubscription','post','/wg/{wg_name}/subscriptions/{msisdn}');
-
+UPDATE BGS_WEBSERVICES.wbs_endpoints set url = '/api' || url;
 select * from BGS_WEBSERVICES.wbs_endpoints;
