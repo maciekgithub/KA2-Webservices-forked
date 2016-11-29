@@ -41,6 +41,8 @@ public class GenericApiController {
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params, @RequestBody(required = false) JsonNode json,
             HttpServletRequest request) {
 
+        //todo agent backdoor-a (dostęp do wszystkich endpointów niezależnie od innych wpisów)
+
         Collection<Endpoint> endpoints = databaseService.getRegisteredEndpoints();
         Endpoint matchedEndpoint = getMatchedEndpoint(request, endpoints);
         log.info("Matched endpoint {} for query {}", matchedEndpoint, request.getRequestURL());
