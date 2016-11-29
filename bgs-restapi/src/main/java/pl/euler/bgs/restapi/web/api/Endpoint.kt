@@ -2,8 +2,6 @@ package pl.euler.bgs.restapi.web.api
 
 import org.springframework.http.HttpMethod
 import org.springframework.web.util.UrlPathHelper
-import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver.API_PREFIX
-import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver.GAPI_PREFIX
 import javax.servlet.http.HttpServletRequest
 
 data class Endpoint(val requestType: String, val httpMethod : HttpMethod, val url : String) {
@@ -11,13 +9,11 @@ data class Endpoint(val requestType: String, val httpMethod : HttpMethod, val ur
     companion object {
         /**
          * Retrieve endpoint address which is provided to database service.
-         *
-         * The /api and /gapi prefix is removed and the ending slash too
          */
         @JvmStatic
         fun getEndpointUrl(request: HttpServletRequest): String {
             val pathWithinApplication = UrlPathHelper().getPathWithinApplication(request)
-            return pathWithinApplication.replaceFirst(API_PREFIX, "").replaceFirst(GAPI_PREFIX, "").removeSuffix("/")
+            return pathWithinApplication.removeSuffix("/")
         }
 
         /**

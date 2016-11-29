@@ -104,11 +104,11 @@ public class DatabaseService {
     }
 
     @Timed(name = "select_wbs_endpoints")
-    public Collection<Endpoint> getRegisteredEndpoints(String apiPrefix) {
+    public Collection<Endpoint> getRegisteredEndpoints() {
         return jdbcTemplate.query("select request_type, request_method, url from bgs_webservices.wbs_endpoints", (rs, rowNum) -> {
             String requestType = rs.getString("request_type");
             String requestMethod = trim(rs.getString("request_method").toUpperCase());
-            String url = apiPrefix + trim(rs.getString("url"));
+            String url = trim(rs.getString("url"));
             return new Endpoint(requestType, HttpMethod.resolve(requestMethod), url);
         });
     }

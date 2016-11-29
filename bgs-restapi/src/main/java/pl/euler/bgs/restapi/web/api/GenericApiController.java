@@ -41,7 +41,7 @@ public class GenericApiController {
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params, @RequestBody(required = false) JsonNode json,
             HttpServletRequest request) {
 
-        Collection<Endpoint> endpoints = databaseService.getRegisteredEndpoints(RequestParamsResolver.GAPI_PREFIX);
+        Collection<Endpoint> endpoints = databaseService.getRegisteredEndpoints();
         Endpoint matchedEndpoint = getMatchedEndpoint(request, endpoints);
         log.info("Matched endpoint {} for query {}", matchedEndpoint, request.getRequestURL());
 
