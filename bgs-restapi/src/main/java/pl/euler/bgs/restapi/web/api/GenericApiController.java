@@ -2,6 +2,7 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.annotations.Api;
 import javaslang.collection.List;
 import javaslang.control.Option;
 import org.slf4j.Logger;
@@ -23,9 +24,10 @@ import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-@RestController
 @SuppressWarnings("unused")
-@RequestMapping(RequestParamsResolver.GAPI_PREFIX)
+@RestController
+@RequestMapping(RequestParamsResolver.API_PREFIX)
+@Api(value = "BGS REST API", description = "BGS REST API Endpoints")
 public class GenericApiController {
     private static final Logger log = LoggerFactory.getLogger(GenericApiController.class);
 
@@ -37,7 +39,7 @@ public class GenericApiController {
     }
 
     @RequestMapping(value = "/**", method = {GET, PUT, POST, DELETE})
-    @Timed(name = "GAPI")
+    @Timed(name = "Generic API request...")
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params, @RequestBody(required = false) JsonNode json,
             HttpServletRequest request) {
 

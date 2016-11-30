@@ -24,7 +24,6 @@ import static org.apache.http.entity.ContentType.WILDCARD;
  */
 public class RequestParamsResolver implements HandlerMethodArgumentResolver {
     public static final String API_PREFIX = "/api";
-    public static final String GAPI_PREFIX = "/gapi";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
