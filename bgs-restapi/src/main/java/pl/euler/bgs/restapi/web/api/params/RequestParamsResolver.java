@@ -6,14 +6,13 @@ import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import pl.euler.bgs.restapi.web.api.Endpoint;
-
-import java.nio.charset.Charset;
-import java.util.Base64;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.net.URLDecoder.decode;
@@ -28,8 +27,8 @@ import static org.apache.http.entity.ContentType.WILDCARD;
 public class RequestParamsResolver implements HandlerMethodArgumentResolver {
     public static final String API_PREFIX = "/api";
 
-    private final String AUTHORIZATION_HEADER_NAME = "Authorization";
-    private final String BASIC_AUTHENTICATION_PREFIX = "Basic";
+    private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+    private static final String BASIC_AUTHENTICATION_PREFIX = "Basic";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -43,9 +42,9 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         String userAgent = StringUtils.upperCase(webRequest.getHeader("User-Agent"));
         String date = webRequest.getHeader("Date");
         String accept = webRequest.getHeader("Accept");
-        String password = extractBasicAuthenticationPassword(webRequest);
+        Option<String> passwordHash = extractBasicAuthenticationPassword(webRequest);
 
-        if (isNull(userAgent) || isNull(date) || isNull(password)) {
+        if (isNull(userAgent) || isNull(date) || passwordHash.isEmpty()) {
             throw new MissingHeaderException("There is no User-Agent / Date / Authorization headers on the request!");
         }
 
@@ -59,29 +58,25 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         String requestUrl = Endpoint.getEndpointUrl(nativeRequest);
         String schema = nativeRequest.getScheme();
 
-        ApiHeaders apiHeaders = new ApiHeaders(userAgent, date, accept, schema, password);
+        ApiHeaders apiHeaders = new ApiHeaders(userAgent, date, accept, passwordHash.get());
 
-        return new RequestParams(requestUrl, httpMethod, apiHeaders, requestParamsOption);
+        return new RequestParams(requestUrl, httpMethod, schema, apiHeaders, requestParamsOption);
     }
 
     private boolean isJsonOrWildcardContentType(String contentType) {
         return APPLICATION_JSON.getMimeType().equalsIgnoreCase(contentType) || WILDCARD.getMimeType().equalsIgnoreCase(contentType);
     }
 
-    private String extractBasicAuthenticationPassword(NativeWebRequest webRequest) {
-        String base64Credentials = null;
-        String authorizationHeader = webRequest.getParameter(AUTHORIZATION_HEADER_NAME);
+    private Option<String> extractBasicAuthenticationPassword(NativeWebRequest webRequest) {
+        String authorizationHeader = webRequest.getHeader(AUTHORIZATION_HEADER_NAME);
 
-        if (!isNull(authorizationHeader) && isBasicAuthentication(authorizationHeader)) {
-            //TODO the default assumption is that we got Base64 credentials - to confirm with OPL
-            base64Credentials = authorizationHeader.substring(BASIC_AUTHENTICATION_PREFIX.length()).trim();
-        }
-
-        return base64Credentials;
-    }
-
-    private boolean isBasicAuthentication(String authorizationHeader) {
-        return authorizationHeader.startsWith(BASIC_AUTHENTICATION_PREFIX);
+        //TODO the default assumption is that we got Base64 credentials - to confirm with OPL
+        return Option.of(authorizationHeader)
+                .filter(StringUtils::isNotBlank)
+                .filter(ah -> ah.startsWith(BASIC_AUTHENTICATION_PREFIX))
+                .map(ah -> ah.substring(BASIC_AUTHENTICATION_PREFIX.length()).trim())
+                .map(ah -> new String(Base64Utils.decodeFromString(ah), Charsets.UTF_8))
+                .map(ah -> DigestUtils.md5DigestAsHex(ah.getBytes()));
     }
 
 }

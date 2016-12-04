@@ -4,6 +4,12 @@ CREATE TABLE bgs_webservices.wbs_endpoints (
   request_method varchar2(255),
   url varchar2(255)
 );
+DROP TABLE bgs_webservices.wbs_endpoints;
+
+CREATE OR REPLACE VIEW bgs_webservices.wbs_endpoints(request_type, request_method, url)
+  AS SELECT "REQUEST_TYPE", "REQUEST_METHOD", "URL" FROM "BGS_WEBSERVICES"."WBS$ENDPOINTS" WHERE ENABLED = 'Y';
+
+select * from bgs_webservices.wbs_endpoints;
 
 DELETE FROM BGS_WEBSERVICES.wbs_endpoints;
 

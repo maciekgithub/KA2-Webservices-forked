@@ -22,7 +22,7 @@ import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -51,10 +51,8 @@ public class GenericApiController {
 
         //todo agent backdoor-a (dostęp do wszystkich endpointów niezależnie od innych wpisów)
 
-        Agent agent = securityService.getAgentDetails(params.getHeaders().getUserAgent());
-        if (Objects.isNull(agent)) {
-            throw new AgentAuthenticationException(UNAUTHORIZED, "Agent has not been authorized.");
-        }
+        Optional<Agent> optionalAgent = securityService.getAgentDetails(params.getHeaders().getUserAgent());
+        Agent agent = optionalAgent.orElseThrow(() -> new AgentAuthenticationException(UNAUTHORIZED, "The provided agent doesn't exist."));
 
         SecurityRequest securityRequest = createSecurityRequest(params);
         authenticateAgent(agent, securityRequest);
@@ -63,7 +61,7 @@ public class GenericApiController {
         Endpoint matchedEndpoint = getMatchedEndpoint(request, endpoints);
         log.info("Matched endpoint {} for query {}", matchedEndpoint, request.getRequestURL());
 
-        if (securityService.isAgentAuthorizedToInvokeEndpoint(agent, matchedEndpoint)) {
+        if (!securityService.isAgentAuthorizedToInvokeEndpoint(agent, matchedEndpoint)) {
             throw new AgentAuthenticationException(UNAUTHORIZED, "Agent has no access to this endpoint.");
         }
 
@@ -94,8 +92,7 @@ public class GenericApiController {
     }
 
     private SecurityRequest createSecurityRequest(RequestParams requestParams) {
-//        return new SecurityRequest(requestParams.getHeaders().getSchema(), requestParams.getHeaders())
-        return null;
+        return new SecurityRequest(requestParams.getScheme(), requestParams.getHeaders().getAgentPasswordHash());
     }
 
     private void authenticateAgent(Agent agent, SecurityRequest securityRequest) {
