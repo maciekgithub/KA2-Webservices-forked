@@ -14,6 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.euler.bgs.restapi.core.security.*;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver;
 import pl.euler.bgs.restapi.web.common.BadRequestException;
@@ -21,7 +22,10 @@ import pl.euler.bgs.restapi.web.common.JsonRawResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Objects;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @SuppressWarnings("unused")
@@ -32,10 +36,12 @@ public class GenericApiController {
     private static final Logger log = LoggerFactory.getLogger(GenericApiController.class);
 
     private final DatabaseService databaseService;
+    private final SecurityService securityService;
 
     @Autowired
-    public GenericApiController(DatabaseService databaseService) {
+    public GenericApiController(DatabaseService databaseService, SecurityService securityService) {
         this.databaseService = databaseService;
+        this.securityService = securityService;
     }
 
     @RequestMapping(value = "/**", method = {GET, PUT, POST, DELETE})
@@ -45,9 +51,21 @@ public class GenericApiController {
 
         //todo agent backdoor-a (dostęp do wszystkich endpointów niezależnie od innych wpisów)
 
+        Agent agent = securityService.getAgentDetails(params.getHeaders().getUserAgent());
+        if (Objects.isNull(agent)) {
+            throw new AgentAuthenticationException(UNAUTHORIZED, "Agent has not been authorized.");
+        }
+
+        SecurityRequest securityRequest = createSecurityRequest(params);
+        authenticateAgent(agent, securityRequest);
+
         Collection<Endpoint> endpoints = databaseService.getRegisteredEndpoints();
         Endpoint matchedEndpoint = getMatchedEndpoint(request, endpoints);
         log.info("Matched endpoint {} for query {}", matchedEndpoint, request.getRequestURL());
+
+        if (securityService.isAgentAuthorizedToInvokeEndpoint(agent, matchedEndpoint)) {
+            throw new AgentAuthenticationException(UNAUTHORIZED, "Agent has no access to this endpoint.");
+        }
 
         Option<JsonNode> optionalJson = Option.of(json);
         if (matchedEndpoint.getHttpMethod().equals(HttpMethod.POST) && optionalJson.isEmpty()) {
@@ -75,4 +93,19 @@ public class GenericApiController {
         return matchedEndpoints.head();
     }
 
+    private SecurityRequest createSecurityRequest(RequestParams requestParams) {
+//        return new SecurityRequest(requestParams.getHeaders().getSchema(), requestParams.getHeaders())
+        return null;
+    }
+
+    private void authenticateAgent(Agent agent, SecurityRequest securityRequest) {
+        AgentSecurityStatus agentSecurityStatus = securityService.authenticateAgent(agent, securityRequest);
+
+        switch (agentSecurityStatus) {
+            case INCORRECT_PASSWORD:
+                throw new AgentAuthenticationException(FORBIDDEN, "Authentication failed. Check credentials.");
+            case SSL_REQUIRED:
+                throw new AgentAuthenticationException(FORBIDDEN, "Secure communication is required.");
+        }
+    }
 }
