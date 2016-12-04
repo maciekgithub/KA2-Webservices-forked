@@ -52,26 +52,22 @@ public class SecurityService {
                 + " WHERE acl.enabled = 'Y' AND e.enabled = 'Y'"
                 + " ORDER BY acl.agent_name ASC, e.url ASC";
 
-            jdbcTemplate.query(sql, new RowMapper<Endpoint>() {
+            jdbcTemplate.query(sql, (rs, rowNum) -> {
+                String agentName = rs.getString("acl.agent_name");
+                String requestType = rs.getString("e.request_type");
+                String requestMethod = rs.getString("e.request_method");
+                String url = rs.getString("e.url");
 
-                @Override
-                public Endpoint mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    String agentName = rs.getString("acl.agent_name");
-                    String requestType = rs.getString("e.request_type");
-                    String requestMethod = rs.getString("e.request_method");
-                    String url = rs.getString("e.url");
+                Endpoint endpoint = new Endpoint(requestType, HttpMethod.resolve(requestMethod), url, true);
 
-                    Endpoint endpoint = new Endpoint(requestType, HttpMethod.resolve(requestMethod), url, true);
-
-                    if (!agentsEndpoints.containsKey(agentName)) {
-                        endpoints.add(endpoint);
-                    } else {
-                        agentsEndpoints.put(agentName, endpoints);
-                        endpoints.clear();
-                    }
-
-                    return endpoint;
+                if (!agentsEndpoints.containsKey(agentName)) {
+                    endpoints.add(endpoint);
+                } else {
+                    agentsEndpoints.put(agentName, endpoints);
+                    endpoints.clear();
                 }
+
+                return endpoint;
             });
         }
 
