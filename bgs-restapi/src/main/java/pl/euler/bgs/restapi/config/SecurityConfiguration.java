@@ -54,13 +54,17 @@ public class SecurityConfiguration {
             http.csrf().disable();
 
             AuthenticationEntryPoint entryPoint = entryPoint();
-            http.exceptionHandling().authenticationEntryPoint(entryPoint);
-            http.httpBasic().authenticationEntryPoint(entryPoint);
-
+            http
+                .exceptionHandling()
+                .authenticationEntryPoint(entryPoint);
+            http
+                .antMatcher("/management/**")
+                .httpBasic()
+                .authenticationEntryPoint(entryPoint);
             http.authorizeRequests()
-                    .antMatchers(HttpMethod.GET, "/management/maintenance", "/management/info", "/management/health").permitAll()
-                    .and()
-                    .authorizeRequests().antMatchers("/management/**").authenticated();
+                .antMatchers(HttpMethod.GET, "/management/maintenance", "/management/info", "/management/health").permitAll()
+                .and()
+                .authorizeRequests().antMatchers("/management/**").authenticated();
         }
 
         private AuthenticationEntryPoint entryPoint() {
