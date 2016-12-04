@@ -8,6 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import pl.euler.bgs.restapi.web.api.Endpoint;
 
+import java.util.Collection;
+import java.util.Optional;
+
 @Service
 public class SecurityService {
 
@@ -34,10 +37,6 @@ public class SecurityService {
     }
 
     public boolean isAgentAuthorizedToInvokeEndpoint(Agent agent, Endpoint endpoint) {
-        if (this.agentsEndpoints.isEmpty()) {
-            this.agentsEndpoints = getAllAgentEndpoints();
-        }
-
         Collection<Endpoint> endpoints = this.agentsEndpoints.get(agent.getName());
 
         if (endpoints == null) {
