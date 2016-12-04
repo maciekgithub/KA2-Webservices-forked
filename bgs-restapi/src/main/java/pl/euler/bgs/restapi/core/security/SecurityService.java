@@ -36,9 +36,22 @@ public class SecurityService {
         });
     }
 
-    public boolean isAgentAuthorizedToInvokeEndpoint() {
+    public boolean isAgentAuthorizedToInvokeEndpoint(Agent agent, Endpoint endpoint) {
+        if (this.agentsEndpoints.isEmpty()) {
+            this.agentsEndpoints = getAllAgentEndpoints();
+        }
 
-        return false;
+        Collection<Endpoint> endpoints = this.agentsEndpoints.get(agent.getName());
+
+        if (endpoints == null) {
+            return false;
+        }
+
+        Optional<Endpoint> optional = endpoints.stream()
+                .filter(e -> e.getUrl().equals(endpoint.getUrl()))
+                .findFirst();
+
+        return optional.isPresent();
     }
 
     public Map<String, Collection<Endpoint>> getAllAgentEndpoints() {
