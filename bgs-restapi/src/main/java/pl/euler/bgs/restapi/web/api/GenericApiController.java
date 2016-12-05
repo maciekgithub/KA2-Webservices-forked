@@ -14,6 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.euler.bgs.restapi.core.security.*;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver;
 import pl.euler.bgs.restapi.web.common.BadRequestException;
@@ -31,19 +32,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class GenericApiController {
     private static final Logger log = LoggerFactory.getLogger(GenericApiController.class);
 
-    private final DatabaseService databaseService;
+    private final GenericApiService databaseService;
+    private final SecurityService securityService;
 
     @Autowired
-    public GenericApiController(DatabaseService databaseService) {
+    public GenericApiController(GenericApiService databaseService, SecurityService securityService) {
         this.databaseService = databaseService;
+        this.securityService = securityService;
     }
 
     @RequestMapping(value = "/**", method = {GET, PUT, POST, DELETE})
     @Timed(name = "Generic API request...")
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params, @RequestBody(required = false) JsonNode json,
             HttpServletRequest request) {
-
-        //todo agent backdoor-a (dostęp do wszystkich endpointów niezależnie od innych wpisów)
 
         Collection<Endpoint> endpoints = databaseService.getRegisteredEndpoints();
         Endpoint matchedEndpoint = getMatchedEndpoint(request, endpoints);
@@ -53,6 +54,8 @@ public class GenericApiController {
         if (matchedEndpoint.getHttpMethod().equals(HttpMethod.POST) && optionalJson.isEmpty()) {
             throw new BadRequestException("The json body is required for POST request!");
         }
+
+        securityService.authenticate(params, matchedEndpoint);
 
         return databaseService.executeRequestLogic(new DatabaseRequest(params, optionalJson)).convertToWebResponse();
     }

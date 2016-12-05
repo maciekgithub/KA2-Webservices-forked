@@ -1,5 +1,7 @@
 package pl.euler.bgs.restapi;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +34,7 @@ public class GenapiInternalApiTest {
 
     @Test
     public void shouldCheckMatching() throws Exception {
-        MockHttpServletRequest post = new MockHttpServletRequest("POST", "/api/lists/xyz");
-        boolean matches = new AntPathRequestMatcher("/lists/{abonent_listname}").matches(post);
-        System.out.println(matches);
+        Multimap<String, String> agentsEndpoints = HashMultimap.create();
+        System.out.println(agentsEndpoints.get("test"));
     }
 }

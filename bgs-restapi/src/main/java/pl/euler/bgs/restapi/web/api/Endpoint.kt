@@ -4,7 +4,8 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.util.UrlPathHelper
 import javax.servlet.http.HttpServletRequest
 
-data class Endpoint(val requestType: String, val httpMethod : HttpMethod, val url : String) {
+data class Endpoint(val requestType: String, val httpMethod : HttpMethod, val url : String, val enabled : Boolean) {
+    constructor(requestType: String, httpMethod : HttpMethod, url : String) : this(requestType, httpMethod, url, true)
 
     companion object {
         /**
