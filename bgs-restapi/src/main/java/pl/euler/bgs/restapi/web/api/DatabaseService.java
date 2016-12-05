@@ -2,18 +2,22 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.io.CharStreams;
+import javaslang.control.Option;
+import javaslang.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.RecoverableDataAccessException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
 import pl.euler.bgs.restapi.core.tracking.Tracked;
-import pl.euler.bgs.restapi.web.api.headers.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.HttpCodeException;
 
 import java.io.StringReader;
@@ -22,8 +26,11 @@ import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.trim;
 
 @Service
 //@Profile("!test")
@@ -62,18 +69,18 @@ public class DatabaseService {
         declaredParameters.add(new SqlOutParameter(RESPONSE_STATUS_PARAM, Types.NUMERIC));
         declaredParameters.add(new SqlOutParameter(RESPONSE_BODY_PARAM, Types.CLOB));
 
-        ApiHeaders headers = request.getHeaders();
+        ApiHeaders headers = request.getParams().getHeaders();
         RequestParams requestParams = request.getParams();
 
         try {
             Map<String, Object> result = this.jdbcTemplate.call(con -> {
                 CallableStatement statement = con.prepareCall("{call bgs_webservices.wbs_webservices.request(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
-                statement.setString(1, request.getRequestUrl());
+                statement.setString(1, requestParams.getUrl());
                 statement.setString(2, requestParams.getHttpMethod().name());
                 statement.setString(3, requestParams.getUrlParams());
                 statement.setString(4, headers.getUserAgent());
                 statement.setString(5, headers.getDate());
-                statement.setString(6, headers.getContentType());
+                statement.setString(6, headers.getAcceptType());
                 statement.setCharacterStream(7, new StringReader(request.getRequestJson()), request.getRequestJson().length());
                 statement.registerOutParameter(8, Types.NUMERIC);
                 statement.registerOutParameter(9, Types.CLOB);
@@ -81,9 +88,11 @@ public class DatabaseService {
             }, declaredParameters);
 
             Clob responseBody = (Clob) result.get(RESPONSE_BODY_PARAM);
-            String responseJson = CharStreams.toString(responseBody.getCharacterStream());
+            Option<String> optionalJson = Option.of(responseBody)
+                    .map(rb -> Try.of(rb::getCharacterStream).map(CharStreams::toString).get());
+
             int status = ((BigDecimal) result.get(RESPONSE_STATUS_PARAM)).intValue();
-            DatabaseResponse dbResponse = new DatabaseResponse(responseJson, status);
+            DatabaseResponse dbResponse = new DatabaseResponse(optionalJson, status);
             log.info("return response: {}", dbResponse.infoLog());
             return dbResponse;
         } catch (RecoverableDataAccessException dataException) {
@@ -94,6 +103,16 @@ public class DatabaseService {
             log.error("", e);
             throw new IllegalStateException("Cannot execute request logic!", e);
         }
+    }
+
+    @Timed(name = "select_wbs_endpoints")
+    public Collection<Endpoint> getRegisteredEndpoints() {
+        return jdbcTemplate.query("select request_type, request_method, url from bgs_webservices.wbs_endpoints", (rs, rowNum) -> {
+            String requestType = rs.getString("request_type");
+            String requestMethod = trim(rs.getString("request_method").toUpperCase());
+            String url = trim(rs.getString("url"));
+            return new Endpoint(requestType, HttpMethod.resolve(requestMethod), url);
+        });
     }
 
 }

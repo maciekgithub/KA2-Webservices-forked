@@ -1,21 +1,26 @@
 package pl.euler.bgs.restapi;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.client.RestTemplate;
 import pl.euler.bgs.restapi.web.genapi.SubscriptionList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@TestPropertySource(locations="classpath:test.properties")
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+//@TestPropertySource(locations="classpath:test.properties")
 public class GenapiInternalApiTest {
 
     @Test
@@ -27,4 +32,9 @@ public class GenapiInternalApiTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    public void shouldCheckMatching() throws Exception {
+        Multimap<String, String> agentsEndpoints = HashMultimap.create();
+        System.out.println(agentsEndpoints.get("test"));
+    }
 }

@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.jdbc.metadata.DataSourcePoolMetada
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.euler.bgs.restapi.core.management.DataSourceHealthIndicator;
-import pl.euler.bgs.restapi.web.maintenance.MaintenanceService;
+import pl.euler.bgs.restapi.core.management.MaintenanceService;
 
 import javax.sql.DataSource;
 import java.util.Collection;

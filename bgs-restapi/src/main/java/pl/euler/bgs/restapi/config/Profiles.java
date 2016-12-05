@@ -1,7 +1,11 @@
 package pl.euler.bgs.restapi.config;
 
+/**
+ * List of profiles available on system.
+ */
 public interface Profiles {
-    String DEV = "dev";
+    /** Production profile. Different configuration for log files */
     String PROD = "prod";
-    String INTEGRATION_TESTING= "integration-testing";
+    /** Dev profile. All logs to the console */
+    String DEV = "dev";
 }

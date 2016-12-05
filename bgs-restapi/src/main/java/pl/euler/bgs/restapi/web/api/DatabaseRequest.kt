@@ -1,26 +1,21 @@
 package pl.euler.bgs.restapi.web.api
 
+import com.fasterxml.jackson.databind.JsonNode
+import javaslang.control.Option
 import org.apache.commons.lang3.StringUtils
-import org.springframework.http.HttpMethod
-import pl.euler.bgs.restapi.web.api.headers.ApiHeaders
+import pl.euler.bgs.restapi.web.api.params.RequestParams
 
-data class DatabaseRequest(val requestUrl: String, val params: RequestParams, val headers: ApiHeaders, val requestJson: String) {
+data class DatabaseRequest(val params: RequestParams, private val _requestJson: Option<JsonNode>) {
+    val requestJson : String
+        get() = _requestJson.map { it.toString() }.orElse("{}")
 
-    constructor(requestUrl: String, requestMethod: HttpMethod, headers: ApiHeaders) :
-        this(requestUrl, RequestParams(requestMethod), headers, "{}") {
-    }
-
-    constructor(requestUrl: String, requestParams: RequestParams, headers: ApiHeaders) :
-        this(requestUrl, requestParams, headers, "{}") {
-    }
-
-    constructor(requestUrl: String, requestMethod: HttpMethod, headers: ApiHeaders, requestJson: String) :
-        this(requestUrl, RequestParams(requestMethod), headers, requestJson) {
+    constructor(requestParams: RequestParams) :
+        this(requestParams, Option.none()) {
     }
 
     override fun toString(): String {
-        return "DatabaseResponse(requestUrl=$requestUrl, requestParams=$params, headers=$headers, json='$requestJson')"
+        return "DatabaseResponse(requestParams=$params, json='$requestJson')"
     }
 
-    fun infoLog(): String = "DatabaseResponse(requestUrl=$requestUrl, requestParams=$params, headers=$headers, partialJson="+ StringUtils.left(requestJson, 50) +"...)"
+    fun infoLog(): String = "DatabaseResponse(requestParams=$params, partialJson="+ StringUtils.left(requestJson, 50) +"...)"
 }

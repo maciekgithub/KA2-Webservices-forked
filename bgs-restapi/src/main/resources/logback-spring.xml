@@ -1,7 +1,11 @@
 <configuration>
 
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} [%X{client-ip:- }] %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%X{client-ip:- }] [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+
     <property name="LOG_PATH" value="${LOG_PATH:-./logs}" />
     <property name="MAIN_LOG_FILE" value="${MAIN_LOG_FILE:-${LOG_PATH}/bgs.log}"/>
     <property name="LOG_FILE_SUMMARY_TRACKING" value="${LOG_FILE_SUMMARY_TRACKING:-${LOG_PATH}/summary-tracking.log}"/>
@@ -45,7 +49,7 @@
             </triggeringPolicy>
         </appender>
 
-        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <appender name="BGS-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <encoder>
                 <pattern>${FILE_LOG_PATTERN}</pattern>
             </encoder>
@@ -60,7 +64,7 @@
         </appender>
 
         <root level="INFO">
-            <appender-ref ref="FILE" />
+            <appender-ref ref="BGS-FILE" />
         </root>
 
         <logger name="summary-tracking" level="INFO" additivity="false" >
