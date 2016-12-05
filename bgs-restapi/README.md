@@ -33,6 +33,7 @@ GET     /management/health                          -> status about application 
 GET     /management/info                            -> build version information, authorization is not required
 GET     /management/trace                           -> tracing last 10 requests, authorization required
 GET     /management/metrics                         -> jvm parameters (mem, threads, etc.), authorization required
+DELETE  /management/cache                           -> clear all caches, authorization required
 GET     /management/log/{fileName}                  -> downlaod log file from last 24H, ie. GET /management/log/bgs.log or /management/log/bgs (without suffix .log will work to)
 GET     /management/log/bgs?mode=display&lines=150  -> display in browser last 150 lines of log file (for example from bgs.log file), default values for parameters: lines=200, mode=download
 ```

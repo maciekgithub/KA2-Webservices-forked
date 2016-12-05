@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(locations="classpath:log-test.properties")
+@TestPropertySource(locations="classpath:logging-test.properties")
 public class LogFilesServiceTest {
 
     @Autowired

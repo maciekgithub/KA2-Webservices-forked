@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.RecoverableDataAccessException;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
@@ -25,11 +24,8 @@ import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.trim;
 
 @Service
 public class GenericApiService {
@@ -101,16 +97,6 @@ public class GenericApiService {
             log.error("", e);
             throw new IllegalStateException("Cannot execute request logic!", e);
         }
-    }
-
-    @Timed(name = "select_wbs_endpoints")
-    public Collection<Endpoint> getRegisteredEndpoints() {
-        return jdbcTemplate.query("select request_type, request_method, url from bgs_webservices.wbs_endpoints", (rs, rowNum) -> {
-            String requestType = rs.getString("request_type");
-            String requestMethod = trim(rs.getString("request_method").toUpperCase());
-            String url = trim(rs.getString("url"));
-            return new Endpoint(requestType, HttpMethod.resolve(requestMethod), url);
-        });
     }
 
 }

@@ -14,10 +14,11 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pl.euler.bgs.restapi.config.AppProperties;
+import pl.euler.bgs.restapi.config.CacheConfiguration;
 import pl.euler.bgs.restapi.config.SwaggerConfiguration;
 
 @SpringBootApplication
-@Import(SwaggerConfiguration.class)
+//@Import(value = {SwaggerConfiguration.class, CacheConfiguration.class})
 @EnableConfigurationProperties({AppProperties.class})
 @EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
 public class Application extends SpringBootServletInitializer {

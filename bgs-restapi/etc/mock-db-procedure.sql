@@ -1,22 +1,4 @@
--- check user open sessions
-select username, sid, serial# from v$session where username = 'BGS';
-
--- kill all session on server side
-begin
-  for x in (select  SID
-              ,Serial#
-              ,program
-              ,username
-            from v$session
-            where username = 'BGS'
-  ) loop
-    execute immediate 'Alter System Kill Session ' || x.Sid || ',' || x.Serial# || ' IMMEDIATE';
-  end loop;
-end;
-/
-
 --- 2016.10.19 specyfikacja metod
-
 create or replace package bgs_webservices.wbs_webservices is
   procedure request(
     p_request_url         varchar2,
@@ -49,12 +31,3 @@ create or replace package body bgs_webservices.wbs_webservices is
       p_answer_body := ' { "response": "OK" }';
     end;
 end;
-
--- test execution
-
-DECLARE
-  answer CLOB;
-  status INTEGER;
-BEGIN
-  bgs_webservices.wbs_webservices.request('/api/metrics', 'GET', '', 'agent', 'date', 'contenttype', '{"name": "Robert"}', status, answer);
-END;

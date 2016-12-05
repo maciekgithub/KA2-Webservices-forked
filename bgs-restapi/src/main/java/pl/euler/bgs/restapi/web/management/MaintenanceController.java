@@ -56,6 +56,11 @@ public class MaintenanceController {
         return maintenanceHealthIndicator.health();
     }
 
+    @DeleteMapping("/cache")
+    public void clearCaches() {
+        maintenanceService.clearAllCaches();
+    }
+
     @GetMapping(value = "/log/{fileName:.+}")
     @ResponseBody
     public HttpEntity<?> getFile(@PathVariable String fileName, HttpServletResponse response,

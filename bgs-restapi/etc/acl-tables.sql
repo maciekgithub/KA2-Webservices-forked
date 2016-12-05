@@ -72,8 +72,33 @@ ALTER TABLE "BGS_WEBSERVICES"."WBS$ENDPOINTS_PARAMS" MODIFY ("PARAM_NAME" NOT NU
 ALTER TABLE "BGS_WEBSERVICES"."WBS$ENDPOINTS_PARAMS" MODIFY ("PARAM_USE_TYPE" NOT NULL ENABLE);
 ALTER TABLE "BGS_WEBSERVICES"."WBS$ENDPOINTS_PARAMS" ADD CONSTRAINT "WBS$ENDPOINTS_PARAMS_CHK1" CHECK (param_use_type IN ('REQUIRED', 'FORBIDDEN', 'DEFAULT')) ENABLE;
 
--- example data
--- password md5: wbs_agent
+-- view for all active endpoints
+CREATE OR REPLACE VIEW bgs_webservices.wbs_endpoints(request_type, request_method, url)
+AS SELECT "REQUEST_TYPE", "REQUEST_METHOD", "URL" FROM "BGS_WEBSERVICES"."WBS$ENDPOINTS" WHERE ENABLED = 'Y';
+
+DELETE FROM bgs_webservices.wbs$endpoints;
+
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('notIMEI','post','/api/imei', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('lstAbolist','get','/api/lists', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('delAbolist','delete','/api/lists/{abonent_listname}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('getAbolistSimple','get','/api/lists/{abonent_listname}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('getAbolistFull','post','/api/lists/{abonent_listname}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('creAbolist','put','/api/lists/{abonent_listname}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('lstWatchdog','get','/api/wg', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('creWatchdog','post','/api/wg', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('delWatchdog','delete','/api/wg/{wg_name}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('infoWatchdog','get','/api/wg/{wg_name}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('updWatchdog','post','/api/wg/{wg_name}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('startWatchdog','put','/api/wg/{wg_name}/start', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('stopWatchdog','put','/api/wg/{wg_name}/stop', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('updSubscriptionList','post','/api/wg/{wg_name}/subscriptions', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('delSubscription','delete','/api/wg/{wg_name}/subscriptions/{msisdn}', '-');
+insert into bgs_webservices.wbs$endpoints(request_type, request_method, url, procedure_name) values('creSubscription','post','/api/wg/{wg_name}/subscriptions/{msisdn}', '-');
+INSERT INTO BGS_WEBSERVICES.WBS$ENDPOINTS (REQUEST_TYPE, REQUEST_METHOD, URL, PROCEDURE_NAME) VALUES ('getMetric', 'post', '/api/lists', 'bgs_metrics.met_metrics_api.wsGetMetric');
+INSERT INTO BGS_WEBSERVICES.WBS$ENDPOINTS (REQUEST_TYPE, REQUEST_METHOD, URL, PROCEDURE_NAME) VALUES ('getDictionary', 'get', '/api/dictionaries', 'bgs_metrics.met_metrics_api.getDictionary');
+
+select * from bgs_webservices.wbs$endpoints;
+-- example data, password for agents md5: wbs_agent
 INSERT INTO BGS_WEBSERVICES.WBS$AGENTS (AGENT_NAME, ENABLED, PARAM_NAME, DEFAULT_URL, OUTGOING_SSL, INCOMING_SSL, AUTH_PASSWORD)
     VALUES ('BGS-WS', 'Y', 'webservices.net.bgs-ws', '/testnotification', 'N', 'N', 'd8d6d3fafb8a3154bf601c946d262f4a');
 INSERT INTO BGS_WEBSERVICES.WBS$AGENTS (AGENT_NAME, ENABLED, PARAM_NAME, DEFAULT_URL, OUTGOING_SSL, INCOMING_SSL, AUTH_PASSWORD)
@@ -81,12 +106,6 @@ INSERT INTO BGS_WEBSERVICES.WBS$AGENTS (AGENT_NAME, ENABLED, PARAM_NAME, DEFAULT
 
 INSERT INTO BGS_WEBSERVICES.WBS$ENDPOINT_ACL (REQUEST_TYPE, AGENT_NAME, ENABLED) VALUES ('getMetric', 'GEN', 'Y');
 INSERT INTO BGS_WEBSERVICES.WBS$ENDPOINT_ACL (REQUEST_TYPE, AGENT_NAME, ENABLED) VALUES ('getDictionary', 'GEN', 'Y');
-
-INSERT INTO BGS_WEBSERVICES.WBS$ENDPOINTS (REQUEST_TYPE, REQUEST_METHOD, ENABLED, URL, PROCEDURE_NAME)
-    VALUES ('getMetric', 'post', 'Y', '/api/lists', 'bgs_metrics.met_metrics_api.wsGetMetric');
-INSERT INTO BGS_WEBSERVICES.WBS$ENDPOINTS (REQUEST_TYPE, REQUEST_METHOD, ENABLED, URL, PROCEDURE_NAME)
-VALUES ('getDictionary', 'get', 'Y', '/api/dictionaries', 'bgs_metrics.met_metrics_api.getDictionary');
-
 
 select * from WBS$AGENTS;
 select * from WBS$ENDPOINTS;

@@ -5,7 +5,7 @@
     <property name="LOG_PATH" value="${LOG_PATH:-./logs}" />
     <property name="MAIN_LOG_FILE" value="${MAIN_LOG_FILE:-${LOG_PATH}/bgs.log}"/>
 
-    <springProfile name="log-test">
+    <springProfile name="logging-test">
         <appender name="BGS-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <encoder>
                 <pattern>${FILE_LOG_PATTERN}</pattern>

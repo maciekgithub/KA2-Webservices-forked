@@ -14,6 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.euler.bgs.restapi.core.acl.EndpointsRepository;
 import pl.euler.bgs.restapi.core.security.*;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver;
@@ -32,13 +33,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class GenericApiController {
     private static final Logger log = LoggerFactory.getLogger(GenericApiController.class);
 
-    private final GenericApiService databaseService;
+    private final GenericApiService apiService;
     private final SecurityService securityService;
+    private final EndpointsRepository endpointsRepository;
 
     @Autowired
-    public GenericApiController(GenericApiService databaseService, SecurityService securityService) {
-        this.databaseService = databaseService;
+    public GenericApiController(GenericApiService apiService, SecurityService securityService, EndpointsRepository endpointsRepository) {
+        this.apiService = apiService;
         this.securityService = securityService;
+        this.endpointsRepository = endpointsRepository;
     }
 
     @RequestMapping(value = "/**", method = {GET, PUT, POST, DELETE})
@@ -46,7 +49,7 @@ public class GenericApiController {
     public ResponseEntity<JsonRawResponse> getDictionaries(RequestParams params, @RequestBody(required = false) JsonNode json,
             HttpServletRequest request) {
 
-        Collection<Endpoint> endpoints = databaseService.getRegisteredEndpoints();
+        Collection<Endpoint> endpoints = endpointsRepository.getRegisteredEndpoints();
         Endpoint matchedEndpoint = getMatchedEndpoint(request, endpoints);
         log.info("Matched endpoint {} for query {}", matchedEndpoint, request.getRequestURL());
 
@@ -57,9 +60,10 @@ public class GenericApiController {
 
         securityService.authenticate(params, matchedEndpoint);
 
-        return databaseService.executeRequestLogic(new DatabaseRequest(params, optionalJson)).convertToWebResponse();
+        return apiService.executeRequestLogic(new DatabaseRequest(params, optionalJson)).convertToWebResponse();
     }
 
+    //todo move to generic api service
     private Endpoint getMatchedEndpoint(HttpServletRequest request, Collection<Endpoint> endpoints) {
         HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());
 
