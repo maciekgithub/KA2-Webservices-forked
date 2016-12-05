@@ -2,7 +2,6 @@ package pl.euler.bgs.restapi.web.api;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.annotations.Api;
 import javaslang.collection.List;
 import javaslang.control.Option;
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.euler.bgs.restapi.core.acl.EndpointsRepository;
-import pl.euler.bgs.restapi.core.security.*;
+import pl.euler.bgs.restapi.core.security.SecurityService;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.api.params.RequestParamsResolver;
 import pl.euler.bgs.restapi.web.common.BadRequestException;
@@ -29,7 +28,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @SuppressWarnings("unused")
 @RestController
 @RequestMapping(RequestParamsResolver.API_PREFIX)
-@Api(value = "BGS REST API", description = "BGS REST API Endpoints")
 public class GenericApiController {
     private static final Logger log = LoggerFactory.getLogger(GenericApiController.class);
 

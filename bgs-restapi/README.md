@@ -18,9 +18,7 @@ In order to run integration test use: `gradlew integrationTest`
 
 ## REST API DOCUMENTATION
 
-REST API documentation is available by Swagger under [/api-docs](http://localhost:8080/api-docs) endpoint.
-
-See also the [wiki docs](https://redmine.euler.pl/projects/dokumentacja/wiki/WS_API).
+See the [wiki docs](https://redmine.euler.pl/projects/dokumentacja/wiki/WS_API).
 
 ##### MANAGEMENT ENDPOINTS
 
