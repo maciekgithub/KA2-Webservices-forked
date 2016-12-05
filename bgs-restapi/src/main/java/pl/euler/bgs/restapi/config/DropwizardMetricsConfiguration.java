@@ -7,12 +7,14 @@ import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableMetrics(proxyTargetClass = true)
+@ConditionalOnProperty(value = "app.metrics.enabled", havingValue = "true", matchIfMissing = true)
 public class DropwizardMetricsConfiguration extends MetricsConfigurerAdapter {
     private static final Logger log = LoggerFactory.getLogger(DropwizardMetricsConfiguration.class);
     private final AppProperties appProperties;

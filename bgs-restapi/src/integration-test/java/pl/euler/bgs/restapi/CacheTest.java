@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.euler.bgs.restapi.core.acl.AgentsRepository;
 import pl.euler.bgs.restapi.core.management.MaintenanceService;
@@ -16,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(locations="classpath:integration-test.properties")
 public class CacheTest {
 
     @Autowired

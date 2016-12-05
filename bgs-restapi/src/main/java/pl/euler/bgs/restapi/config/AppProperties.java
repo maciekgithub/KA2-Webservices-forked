@@ -11,12 +11,18 @@ public class AppProperties {
 
     private final Swagger swagger = new Swagger();
 
+    private final Cache cache = new Cache();
+
     public Metrics getMetrics() {
         return metrics;
     }
 
     public Genapi getGenapi() {
         return genapi;
+    }
+
+    public Cache getCache() {
+        return cache;
     }
 
     public static class Genapi {
@@ -71,6 +77,18 @@ public class AppProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    public static class Cache {
+        private int expireAfter = 600;
+
+        public int getExpireAfter() {
+            return expireAfter;
+        }
+
+        public void setExpireAfter(int expireAfter) {
+            this.expireAfter = expireAfter;
         }
     }
 
