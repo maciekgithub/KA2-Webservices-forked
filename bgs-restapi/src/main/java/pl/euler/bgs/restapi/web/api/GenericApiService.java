@@ -32,8 +32,8 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 @Service
-public class DatabaseService {
-    private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
+public class GenericApiService {
+    private static final Logger log = LoggerFactory.getLogger(GenericApiService.class);
 
     private static final String REQUEST_URL = "p_request_url";
     private static final String REQUEST_METHOD = "p_request_method";
@@ -48,7 +48,7 @@ public class DatabaseService {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public DatabaseService(JdbcTemplate jdbcTemplate) {
+    public GenericApiService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -76,7 +76,7 @@ public class DatabaseService {
                 statement.setString(1, requestParams.getUrl());
                 statement.setString(2, requestParams.getHttpMethod().name());
                 statement.setString(3, requestParams.getUrlParams());
-                statement.setString(4, headers.getUserAgent());
+                statement.setString(4, headers.getAgent().getAgentName());
                 statement.setString(5, headers.getDate());
                 statement.setString(6, headers.getAcceptType());
                 statement.setCharacterStream(7, new StringReader(request.getRequestJson()), request.getRequestJson().length());

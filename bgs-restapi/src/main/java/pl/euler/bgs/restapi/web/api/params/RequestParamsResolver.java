@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Base64Utils;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -39,13 +38,13 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-        String userAgent = StringUtils.upperCase(webRequest.getHeader("User-Agent"));
+        String userAgentHeader = StringUtils.upperCase(webRequest.getHeader("User-Agent"));
         String date = webRequest.getHeader("Date");
         String accept = webRequest.getHeader("Accept");
-        Option<String> passwordHash = extractBasicAuthenticationPassword(webRequest);
+        Option<AgentNameAndPassword> agent = extractBasicAuthentication(webRequest);
 
-        if (isNull(userAgent) || isNull(date) || passwordHash.isEmpty()) {
-            throw new MissingHeaderException("There is no User-Agent / Date / Authorization headers on the request!");
+        if (isNull(userAgentHeader) || isNull(date) || agent.isEmpty()) {
+            throw new MissingHeaderException("There is no correct User-Agent / Date / Authorization headers on the request!");
         }
 
         if (!isJsonOrWildcardContentType(firstNonNull(accept, APPLICATION_JSON.getMimeType()))) {
@@ -58,25 +57,32 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
         String requestUrl = Endpoint.getEndpointUrl(nativeRequest);
         String schema = nativeRequest.getScheme();
 
-        ApiHeaders apiHeaders = new ApiHeaders(userAgent, date, accept, passwordHash.get());
+        ApiHeaders apiHeaders = new ApiHeaders(agent.get(), date, accept);
 
         return new RequestParams(requestUrl, httpMethod, schema, apiHeaders, requestParamsOption);
     }
 
+    /**
+     * Check the JSON and WILCARD type as accepted content type.
+     */
     private boolean isJsonOrWildcardContentType(String contentType) {
         return APPLICATION_JSON.getMimeType().equalsIgnoreCase(contentType) || WILDCARD.getMimeType().equalsIgnoreCase(contentType);
     }
 
-    private Option<String> extractBasicAuthenticationPassword(NativeWebRequest webRequest) {
+    /**
+     * Decodes basic auth header into a username and password.
+     */
+    private Option<AgentNameAndPassword> extractBasicAuthentication(NativeWebRequest webRequest) {
         String authorizationHeader = webRequest.getHeader(AUTHORIZATION_HEADER_NAME);
 
-        //TODO the default assumption is that we got Base64 credentials - to confirm with OPL
         return Option.of(authorizationHeader)
                 .filter(StringUtils::isNotBlank)
                 .filter(ah -> ah.startsWith(BASIC_AUTHENTICATION_PREFIX))
                 .map(ah -> ah.substring(BASIC_AUTHENTICATION_PREFIX.length()).trim())
                 .map(ah -> new String(Base64Utils.decodeFromString(ah), Charsets.UTF_8))
-                .map(ah -> DigestUtils.md5DigestAsHex(ah.getBytes()));
+                .filter(token -> token.contains(":"))
+                .map(token -> token.split(":"))
+                .map(array -> new AgentNameAndPassword(array[0], array[1]));
     }
 
 }

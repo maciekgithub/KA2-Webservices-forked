@@ -2,32 +2,86 @@ package pl.euler.bgs.restapi.core.security;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import pl.euler.bgs.restapi.web.api.Endpoint;
+import pl.euler.bgs.restapi.web.api.params.AgentNameAndPassword;
+import pl.euler.bgs.restapi.web.api.params.ApiHeaders;
+import pl.euler.bgs.restapi.web.api.params.RequestParams;
 
 import java.util.Collection;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Service
 public class SecurityService {
+    private static final Logger log = LoggerFactory.getLogger(SecurityService.class);
     private static final String HTTPS_PROTOCOL = "https";
 
-    private final Multimap<String, Endpoint> agentsEndpoints;
+    private final SecurityProperties securityProperties;
     private final JdbcTemplate jdbcTemplate;
 
+    private final Multimap<String, Endpoint> agentsEndpoints;
+
     @Autowired
-    public SecurityService(JdbcTemplate jdbcTemplate) {
+    public SecurityService(SecurityProperties securityProperties, JdbcTemplate jdbcTemplate) {
         this.agentsEndpoints = HashMultimap.create();
+        this.securityProperties = securityProperties;
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public boolean isAgentAuthorizedToInvokeEndpoint(Agent agent, Endpoint endpoint) {
+    /**
+     * Authorization and authentication of provided agent.
+     *
+     * @param requestParams params of the request
+     * @param currentEndpoint matched generic endpoint
+     */
+    public void authenticate(RequestParams requestParams, Endpoint currentEndpoint) {
+        ApiHeaders headers = requestParams.getHeaders();
+
+        if (isMaintenanceAgent(headers.getAgent())) {
+            log.info("Access to generic api by maintenance agent!");
+            return;
+        }
+
+        Optional<Agent> optionalAgent = getAgentDetails(headers.getAgent().getAgentName());
+        Agent agent = optionalAgent.orElseThrow(() -> new AgentAuthenticationException(UNAUTHORIZED, "The provided agent doesn't exist."));
+
+        SecurityRequest securityRequest = createSecurityRequest(requestParams);
+        AgentSecurityStatus agentAuthResult = authenticateAgent(agent, securityRequest);
+
+        switch (agentAuthResult) {
+            case INCORRECT_PASSWORD:
+                throw new AgentAuthenticationException(UNAUTHORIZED, "Authentication failed. Check credentials.");
+            case SSL_REQUIRED:
+                throw new AgentAuthenticationException(UNAUTHORIZED, "Secure communication is required.");
+        }
+
+        if (!isAgentAuthorizedToInvokeEndpoint(agent, currentEndpoint)) {
+            throw new AgentAuthenticationException(FORBIDDEN, "Agent has no access to this endpoint.");
+        }
+    }
+
+    private boolean isMaintenanceAgent(AgentNameAndPassword agent) {
+        return StringUtils.equals(agent.getAgentName(), securityProperties.getUser().getName())
+                && StringUtils.equals(agent.getPassword(), securityProperties.getUser().getPassword());
+    }
+
+    private SecurityRequest createSecurityRequest(RequestParams requestParams) {
+        return new SecurityRequest(requestParams.getScheme(), requestParams.getHeaders().getAgent().getHashedPassword());
+    }
+
+    private boolean isAgentAuthorizedToInvokeEndpoint(Agent agent, Endpoint endpoint) {
         Collection<Endpoint> endpoints = getAllAgentEndpoints().get(agent.getName());
 
         return endpoints
@@ -35,7 +89,7 @@ public class SecurityService {
                 .anyMatch(e -> e.getUrl().equals(endpoint.getUrl()));
     }
 
-    public AgentSecurityStatus authenticateAgent(Agent agent, SecurityRequest securityRequest) {
+    private AgentSecurityStatus authenticateAgent(Agent agent, SecurityRequest securityRequest) {
         requireNonNull(agent);
 
         if (!agent.getPasswordHash().equals(securityRequest.getPasswordHash())) {
