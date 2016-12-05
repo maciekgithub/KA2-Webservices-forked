@@ -57,6 +57,7 @@ if (project.hasProperty('war')) {
 
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
@@ -93,8 +94,10 @@ dependencies {
 		exclude(module: 'metrics-core')
 		exclude(module: 'metrics-healthchecks')
 	}
+	compile "org.springframework.boot:spring-boot-configuration-processor"
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.5.2'
+	testCompile 'com.mashape.unirest:unirest-java:1.4.9'
 }
 
 compileJava.dependsOn(processResources)
