@@ -26,7 +26,7 @@ public class AgentsRepository {
     @Cacheable(value = CacheConfiguration.CACHE_AGENTS, key = "#name")
     public Optional<Agent> getAgentDetails(String name) {
         log.info("Loading agent: {} details.", name);
-        String sql = "SELECT agent_name, auth_password, incoming_ssl, enabled FROM bgs_webservices.wbs$agents WHERE agent_name = ?";
+        String sql = "SELECT agent_name, auth_password, incoming_ssl, enabled FROM bgs_webservices.wbs_agents WHERE agent_name = ?";
 
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{name}, (rs, rowNum) -> {

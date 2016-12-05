@@ -34,7 +34,7 @@ public class EndpointsRepository {
         Multimap<String, Endpoint> agentsEndpoints = HashMultimap.create();
         String sql =
                 "SELECT acl.agent_name as agent_name, e.request_type , e.request_method, e.url"
-                        + " FROM bgs_webservices.wbs$endpoint_acl acl JOIN bgs_webservices.wbs$endpoints e"
+                        + " FROM bgs_webservices.WBS_ENDPOINT_ACL acl JOIN bgs_webservices.wbs_endpoints e"
                         + " ON acl.request_type = e.request_type"
                         + " WHERE acl.enabled = 'Y' AND e.enabled = 'Y'"
                         + " ORDER BY acl.agent_name ASC, e.url ASC";
