@@ -2,7 +2,6 @@ package pl.euler.bgs.restapi.web.api.params;
 
 import com.google.common.base.Charsets;
 import javaslang.control.Option;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
@@ -12,6 +11,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import pl.euler.bgs.restapi.web.api.Endpoint;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.net.URLDecoder.decode;
