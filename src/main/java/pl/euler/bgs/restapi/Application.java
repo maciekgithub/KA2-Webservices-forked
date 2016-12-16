@@ -1,7 +1,6 @@
 package pl.euler.bgs.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration;
@@ -31,7 +30,6 @@ public class Application extends SpringBootServletInitializer {
 	@Autowired
 	public void configureJackson(Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder) {
 		jackson2ObjectMapperBuilder.serializationInclusion(JsonInclude.Include.NON_NULL);
-		jackson2ObjectMapperBuilder.modulesToInstall(new KotlinModule());
 	}
 
 }

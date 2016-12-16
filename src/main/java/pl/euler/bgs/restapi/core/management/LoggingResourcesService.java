@@ -9,7 +9,6 @@ import javaslang.collection.List;
 import javaslang.control.Option;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class LoggingResourcesService {
                 .headOption();
     }
 
-    public String getTailOfTheFile(@NotNull final File file, final int lines) {
+    public String getTailOfTheFile(final File file, final int lines) {
         try {
             ReversedLinesFileReader fileReader = new ReversedLinesFileReader(file, Charsets.UTF_8);
             StringBuilder sb = new StringBuilder();
