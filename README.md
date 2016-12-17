@@ -1,15 +1,9 @@
-## INSTALLATION
+## BUILD
 
 ```
-bower install
-gradlew clean build
-cd build\libs
-java -jar bgs-restapi-{VERSION}.jar
+mvn clean install package
+cp target/bgsapi.war /you/glassfish/deployment/path
 ```
-
-##### Integration testing
-
-In order to run integration test use: `gradlew integrationTest`
 
 ## REST API DOCUMENTATION
 
@@ -23,12 +17,7 @@ POST    /management/maintenance?mode=IMMEDIATE      -> enable maintenance mode, 
 DELETE  /management/maintenance                     -> disable maintenance mode, authorization required
 GET     /management/maintenance                     -> get status about maintenance mode, authorization not required
 GET     /management/health                          -> status about application (up/down/maintenance, etc.), authorization required for details
-GET     /management/info                            -> build version information, authorization is not required
-GET     /management/trace                           -> tracing last 10 requests, authorization required
-GET     /management/metrics                         -> jvm parameters (mem, threads, etc.), authorization required
 DELETE  /management/cache                           -> clear all caches, authorization required
-GET     /management/log/{fileName}                  -> downlaod log file from last 24H, ie. GET /management/log/bgs.log or /management/log/bgs (without suffix .log will work to)
-GET     /management/log/bgs?mode=display&lines=150  -> display in browser last 150 lines of log file (for example from bgs.log file), default values for parameters: lines=200, mode=download
 ```
 
 ## APPLICATION CONFIGURATION & DEPLOYMENT
@@ -133,3 +122,11 @@ On Glassfish you can configure JVM properties on the Configurations -> server-co
 The active profiles could be also defined of course on prepared specific `application.properties` file under provided config location.
 
 [More about externalized configuration, section 24.3](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html)
+
+
+Enable logging on Glassfish
+
+domain/config/logging.properties
+
+org.springframework=INFO
+pl.euler=INFO

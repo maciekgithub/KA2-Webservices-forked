@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<context:component-scan base-package="pl.euler" />
+
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean class="pl.euler.bgs.restapi.web.api.params.RequestParamsResolver"/>
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+
+	<bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath*:application.properties</value>
+				<!--<value>classpath*:application-dev.properties</value>-->
+				<!-- WE CAN SELECT PROFILE PROPERTIES IN RUNTIME -->
+				<!--<value>classpath*:profiles/${com.gene.env}.properties</value>-->
+				<!-- WE CAN SELECT EXTERNAL PROPERTIES FILE IN RUNTIME BY SYSTEM PROPERTY -->
+				<value>file:d:/tmp/application.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="properties" ref="applicationProperties" />
+	</bean>
+
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+		<property name="driverClassName" value="${spring.datasource.driver-class-name}" />
+		<property name="jdbcUrl" value="${spring.datasource.url}" />
+		<property name="username" value="${spring.datasource.username}" />
+		<property name="password" value="${spring.datasource.password}" />
+		<property name="allowPoolSuspension" value="true" />
+		<!--<property name="dataSourceJNDI" value="jdbc/xyz" />-->
+		<!--<property name="maxActive" value="10" />
+		<property name="maxIdle" value="5" />
+		<property name="minIdle" value="2" />
+		<property name="minEvictableIdleTimeMillis" value="600000" />
+		<property name="testOnBorrow" value="true"/>
+		<property name="validationQuery" value="SELECT 1 FROM dual"/>-->
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+
+</beans>

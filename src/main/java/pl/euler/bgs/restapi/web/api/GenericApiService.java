@@ -1,6 +1,5 @@
 package pl.euler.bgs.restapi.web.api;
 
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.io.CharStreams;
 import javaslang.control.Option;
 import javaslang.control.Try;
@@ -13,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
-import pl.euler.bgs.restapi.core.tracking.Tracked;
 import pl.euler.bgs.restapi.web.api.params.ApiHeaders;
 import pl.euler.bgs.restapi.web.api.params.RequestParams;
 import pl.euler.bgs.restapi.web.common.HttpCodeException;
@@ -48,8 +46,7 @@ public class GenericApiService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Tracked
-    @Timed(name = "wbs_webservices_procedure")
+    //@Timed(name = "wbs_webservices_procedure")
     public DatabaseResponse executeRequestLogic(final DatabaseRequest request) {
         log.info("execute request: {}", request.infoLog());
         List<SqlParameter> declaredParameters = new ArrayList<>();

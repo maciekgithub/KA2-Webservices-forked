@@ -2,10 +2,10 @@ package pl.euler.bgs.restapi.web.api.params;
 
 import com.google.common.base.Charsets;
 import javaslang.control.Option;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -18,8 +18,6 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.net.URLDecoder.decode;
 import static java.util.Objects.isNull;
 import static javaslang.control.Try.of;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.apache.http.entity.ContentType.WILDCARD;
 
 /**
  * Resolver which checks the required api headers for each request and retrieve optional parameters.
@@ -29,6 +27,8 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
 
     private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
     private static final String BASIC_AUTHENTICATION_PREFIX = "Basic";
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String WILDCARD = "*/*";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -48,13 +48,13 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
             throw new MissingHeaderException("There is no correct User-Agent / Date / Authorization headers on the request!");
         }
 
-        if (!isJsonOrWildcardContentType(firstNonNull(accept, APPLICATION_JSON.getMimeType()))) {
-            throw new IncorrectHeaderException(String.format("We support only %s as response type!", APPLICATION_JSON.getMimeType()));
+        if (!isJsonOrWildcardContentType(firstNonNull(accept, APPLICATION_JSON))) {
+            throw new IncorrectHeaderException(String.format("We support only %s as response type!", APPLICATION_JSON));
         }
 
         HttpServletRequest nativeRequest = webRequest.getNativeRequest(HttpServletRequest.class);
         Option<String> requestParamsOption = of(() -> decode(nativeRequest.getQueryString(), Charsets.UTF_8.name())).toOption();
-        HttpMethod httpMethod = HttpMethod.resolve(nativeRequest.getMethod());
+        HttpMethod httpMethod = HttpMethod.valueOf(nativeRequest.getMethod().toUpperCase());
         String requestUrl = Endpoint.getEndpointUrl(nativeRequest);
         String schema = nativeRequest.getScheme();
 
@@ -67,7 +67,7 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
      * Check the JSON and WILCARD type as accepted content type.
      */
     private boolean isJsonOrWildcardContentType(String contentType) {
-        return APPLICATION_JSON.getMimeType().equalsIgnoreCase(contentType) || WILDCARD.getMimeType().equalsIgnoreCase(contentType);
+        return APPLICATION_JSON.equalsIgnoreCase(contentType) || WILDCARD.equalsIgnoreCase(contentType);
     }
 
     /**
@@ -80,7 +80,7 @@ public class RequestParamsResolver implements HandlerMethodArgumentResolver {
                 .filter(StringUtils::isNotBlank)
                 .filter(ah -> ah.startsWith(BASIC_AUTHENTICATION_PREFIX))
                 .map(ah -> ah.substring(BASIC_AUTHENTICATION_PREFIX.length()).trim())
-                .map(ah -> new String(Base64Utils.decodeFromString(ah), Charsets.UTF_8))
+                .map(ah -> new String(Base64.decodeBase64(ah), Charsets.UTF_8))
                 .filter(token -> token.contains(":"))
                 .map(token -> token.split(":"))
                 .map(array -> new AgentNameAndPassword(array[0], array[1]));

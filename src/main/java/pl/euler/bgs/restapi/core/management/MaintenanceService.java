@@ -58,7 +58,7 @@ public class MaintenanceService {
         this.unwrappedDataSource.resumePool();
     }
 
-    public boolean isMaintenanceModeEnabled() {
+    public static boolean isMaintenanceModeEnabled() {
         return MAINTENANCE_MODE;
     }
 
