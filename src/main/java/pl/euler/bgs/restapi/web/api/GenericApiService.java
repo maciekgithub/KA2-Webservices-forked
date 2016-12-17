@@ -1,5 +1,6 @@
 package pl.euler.bgs.restapi.web.api;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.io.CharStreams;
 import javaslang.control.Option;
 import javaslang.control.Try;
@@ -24,6 +25,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class GenericApiService {
@@ -46,8 +48,8 @@ public class GenericApiService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    //@Timed(name = "wbs_webservices_procedure")
     public DatabaseResponse executeRequestLogic(final DatabaseRequest request) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         log.info("execute request: {}", request.infoLog());
         List<SqlParameter> declaredParameters = new ArrayList<>();
         declaredParameters.add(new SqlParameter(REQUEST_URL, Types.VARCHAR));
@@ -85,6 +87,7 @@ public class GenericApiService {
             int status = ((BigDecimal) result.get(RESPONSE_STATUS_PARAM)).intValue();
             DatabaseResponse dbResponse = new DatabaseResponse(optionalJson, status);
             log.info("return response: {}", dbResponse.infoLog());
+            log.info("Database procedure execution time: {} ms", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS));
             return dbResponse;
         } catch (RecoverableDataAccessException dataException) {
             log.info("Cancelling request due to immediate maintenance mode! Cause: {}", dataException.getMessage());
