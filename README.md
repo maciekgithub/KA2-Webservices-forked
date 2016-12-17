@@ -55,3 +55,9 @@ Should be configured per Glassfish server.
 asadmin> create-jdbc-connection-pool --restype javax.sql.DataSource --datasourceclassname oracle.jdbc.pool.OracleDataSource --property "user=bgs:password=bgs: url=jdbc\\:oracle\\:thin\\:@localhost\\:1521\\:XE" Oracle
 asadmin> create-jdbc-resource --connectionpoolid OraclePool --target pmdcluster jdbc/bgs
 ```
+
+##### Example Apache Benchmark request
+
+```
+ab -c50 -n100 -A wsbgs:wsbgs -H "Date:123" -H "User-Agent:wsbgs" http://localhost:8080/bgs/api/dictionaries
+```
