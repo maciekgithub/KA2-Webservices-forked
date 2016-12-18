@@ -5,6 +5,7 @@
 bower_components/
 *.log
 /classes/
+target/
 
 ### IntelliJ IDEA ###
 .idea

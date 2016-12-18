@@ -1,15 +1,9 @@
-## INSTALLATION
+## BUILD AND DEPLOY TO GLASSFISH
 
 ```
-bower install
-gradlew clean build
-cd build\libs
-java -jar bgs-restapi-{VERSION}.jar
+mvn clean install package
+cp target/bgsapi.war /you/glassfish/deployment/path
 ```
-
-##### Integration testing
-
-In order to run integration test use: `gradlew integrationTest`
 
 ## REST API DOCUMENTATION
 
@@ -22,46 +16,17 @@ POST    /management/maintenance                     -> enable maintenance mode, 
 POST    /management/maintenance?mode=IMMEDIATE      -> enable maintenance mode, sessions killed by server, authorization required
 DELETE  /management/maintenance                     -> disable maintenance mode, authorization required
 GET     /management/maintenance                     -> get status about maintenance mode, authorization not required
-GET     /management/health                          -> status about application (up/down/maintenance, etc.), authorization required for details
-GET     /management/info                            -> build version information, authorization is not required
-GET     /management/trace                           -> tracing last 10 requests, authorization required
-GET     /management/metrics                         -> jvm parameters (mem, threads, etc.), authorization required
+GET     /management/health                          -> status about application
 DELETE  /management/cache                           -> clear all caches, authorization required
-GET     /management/log/{fileName}                  -> downlaod log file from last 24H, ie. GET /management/log/bgs.log or /management/log/bgs (without suffix .log will work to)
-GET     /management/log/bgs?mode=display&lines=150  -> display in browser last 150 lines of log file (for example from bgs.log file), default values for parameters: lines=200, mode=download
 ```
 
-## APPLICATION CONFIGURATION & DEPLOYMENT
+## APPLICATION CONFIGURATION
 
-In order to set configuration parameters for specific instance please put `application.properties` file on the same 
-directory where the JAR file has been located.
+The application requires defined JDBC pool on Glassfish server and uses the `jdbc/bgs` JNDI name to obtain data source.
 
-##### ACTIVE PROFILE
+The JNDI name uses by application could by overriden by system property `bgs.datasource.jndi`.
 
-Default active profile is set to dev. This profile has set logging to console and has disabled some features like Swagger docs
-and details tracking.
-
-```
-spring.profiles.active=dev
-```
-
-Suggested profile for production-ready system (with enabled all features):
- 
-```
-spring.profiles.active=prod
-```
-
-##### DB PARAMETERS
-
-Currently there are some default parameters for Oracle connection within application.
-
-```
-spring.datasource.url=jdbc:oracle:thin:@//localhost:1521
-spring.datasource.username=bgs
-spring.datasource.password=bgs
-```
-
-You can reconfigure them for your user and environment.
+The Oracle JDBC driver is not shipped within the application and should by provided by Glassfish server.
 
 ##### ORACLE FAILOVER SUPPORT
 
@@ -73,63 +38,26 @@ spring.datasource.url= jdbc:oracle:thin:@(DESCRIPTION=(LOAD_BALANCE=OFF)(FAILOVE
 
 ##### LOGGING
 
-```
-logging.path=/x/y/z #define custom logging directory path
-logging.config=/xyz/logback.xml # define own log configuration (logback)
-```
+Application uses the SLF4J to JUL logging (default for Glassfish). In this case the entire logging configuration could be made on Glasfish server.
 
-In order to override file names use following system properties (according with logback docs):
-
+Config file: domain/config/logging.properties
 ```
-MAIN_LOG_FILE -> file path & name for main log file
-LOG_FILE_SUMMARY_TRACKING -> file path & name for services statistics
-LOG_FILE_DETAILS_TRACKING -> file path & name for details tracking
+org.springframework=INFO
+pl.euler=INFO
 ```
-
-There are some additional properties to enable/disable logging features:
-
-```
-app.metrics.logs.details-tracking=true      -> should we log all input and output parameters for methods marked by @Tracked withing application
-app.metrics.logs.summary-tracking=true      -> enable/disable performance statistics for methods marked by @Timed withing application 
-app.metrics.logs.report-frequency=60        -> interval for summary tracking statistics in seconds
-```
-
 ##### SSL SUPPORT
 
-The application provides the SSL support. In order to enable SSL the additional profile `ssl` should be enabled. With this profile application starts
-working on standard HTTPS port **443**. Currently mutual SSL authentication is not enabled.
+Should be configured per Glassfish server.
 
-The server certificate is signed by self generated and self signed CA so if you want avoid the untrusted certificate problem please import our CA authority
-to trusted authorities on you machine. With this step you wan't see the issue that the server is untrusted. How to import CA on Chrome:
-
-- Go to Chrome Settings.
-- Click on "advanced settings"
-- Under HTTPS/SSL click to "Manage Certificates"
-- Go to "Trusted Root Certificate Authorities"
-- Click to "Import"
-- There will be a pop up window that will ask you if you want to install this certificate.
-
-You will find server certificates files (private, csr, public) on `/etc/certificates` directory.
-
-##### BUILD WAR & DEPLOY TO GLASSFISH
-
-In order to build war file (tested on Glassfish 4.1.1) instead of executable JAR execute the build with the following command:
+##### Create connection pools
 
 ```
-gradlew clean build -Pwar
+asadmin> create-jdbc-connection-pool --restype javax.sql.DataSource --datasourceclassname oracle.jdbc.pool.OracleDataSource --property "user=bgs:password=bgs: url=jdbc\\:oracle\\:thin\\:@localhost\\:1521\\:XE" Oracle
+asadmin> create-jdbc-resource --connectionpoolid OraclePool --target pmdcluster jdbc/bgs
 ```
 
-In order to override the `application.properties` for configuration on server the easiest way to do it is a specify a JVM property which
-will point to the location with `application.properties`. The name of the property should be `spring.config.location` for example:
-`spring.config.location=d:/conf/`.
-
-On Glassfish you can configure JVM properties on the Configurations -> server-config -> JMV Settings -> JVM Options and you can add:
+##### Example Apache Benchmark request
 
 ```
--Dspring.config.location=d:/tmp/
--Dspring.profiles.active=prod
+ab -c50 -n100 -A wsbgs:wsbgs -H "Date:123" -H "User-Agent:wsbgs" http://localhost:8080/bgs/api/dictionaries
 ```
-
-The active profiles could be also defined of course on prepared specific `application.properties` file under provided config location.
-
-[More about externalized configuration, section 24.3](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html)

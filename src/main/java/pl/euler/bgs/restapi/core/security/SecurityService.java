@@ -4,8 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
+import pl.euler.bgs.restapi.config.SecurityProperties;
 import pl.euler.bgs.restapi.core.acl.AgentsRepository;
 import pl.euler.bgs.restapi.core.acl.EndpointsRepository;
 import pl.euler.bgs.restapi.web.api.Endpoint;
@@ -70,8 +70,8 @@ public class SecurityService {
     }
 
     private boolean isMaintenanceAgent(AgentNameAndPassword agent) {
-        return StringUtils.equals(agent.getAgentName(), securityProperties.getUser().getName())
-                && StringUtils.equals(agent.getPassword(), securityProperties.getUser().getPassword());
+        return StringUtils.equals(agent.getAgentName(), securityProperties.username)
+                && StringUtils.equals(agent.getPassword(), securityProperties.password);
     }
 
     private SecurityRequest createSecurityRequest(RequestParams requestParams) {

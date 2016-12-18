@@ -1,6 +1,5 @@
 package pl.euler.bgs.restapi.core.acl;
 
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
@@ -45,14 +44,13 @@ public class EndpointsRepository {
             String requestMethod = rs.getString("request_method");
             String url = rs.getString("url");
 
-            Endpoint endpoint = new Endpoint(requestType, HttpMethod.resolve(requestMethod.toUpperCase()), url);
+            Endpoint endpoint = new Endpoint(requestType, HttpMethod.valueOf(requestMethod.toUpperCase()), url);
             agentsEndpoints.put(agentName, endpoint);
             return endpoint;
         });
         return agentsEndpoints;
     }
 
-    @Timed(name = "select_wbs_endpoints")
     @Cacheable(CacheConfiguration.CACHE_REGISTERED_ENDPOINTS)
     public Collection<Endpoint> getRegisteredEndpoints() {
         log.info("Loading all registered endpoints from db.");
@@ -60,7 +58,7 @@ public class EndpointsRepository {
             String requestType = rs.getString("request_type");
             String requestMethod = trim(rs.getString("request_method").toUpperCase());
             String url = trim(rs.getString("url"));
-            return new Endpoint(requestType, HttpMethod.resolve(requestMethod), url);
+            return new Endpoint(requestType, HttpMethod.valueOf(requestMethod), url);
         });
     }
 
