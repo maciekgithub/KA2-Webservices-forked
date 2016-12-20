@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration debug="true">
+	<property name="LOG_PATH" value="${isep-module-bgs.log-root}" /> 
+	<appender name="isep-module-bgs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/isep-module-ka-bgs-${com.sun.aas.instanceName}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/isep-module-ka-web-${com.sun.aas.instanceName}-%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} %5level %20.20C{0} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="pl.euler.bgs.restapi" level="debug">
+		<appender-ref ref="isep-module-bgs"/>
+	</logger>
+</configuration>
